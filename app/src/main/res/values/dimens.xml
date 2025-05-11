@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="p_none">0dp</dimen>
+    <dimen name="p_xs">4dp</dimen>
+    <dimen name="p_sm">8dp</dimen>
+    <dimen name="p_md">16dp</dimen>
+    <dimen name="p_lg">24dp</dimen>
+    <dimen name="p_xl">32dp</dimen>
+
+    <dimen name="m_none">0dp</dimen>
+    <dimen name="m_xs">4dp</dimen>
+    <dimen name="m_sm">8dp</dimen>
+    <dimen name="m_md">16dp</dimen>
+    <dimen name="m_lg">24dp</dimen>
+    <dimen name="m_xl">32dp</dimen>
+</resources>
