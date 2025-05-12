@@ -48,7 +48,7 @@ fun DispensAppSearchBar(
                 expanded = expanded,
                 onExpandedChange = { expanded = it },
                 modifier = Modifier.fillMaxSize(),
-                placeholder = { Text(stringResource(R.string.search_your_items)) },
+                placeholder = { Text(text = stringResource(R.string.search_your_items)) },
                 leadingIcon = {
                     if (expanded || query.isNotEmpty()) {
                         IconButton(
@@ -61,17 +61,12 @@ fun DispensAppSearchBar(
                             }
                         )
                     } else {
-                        IconButton(
-                            onClick = { expanded = false },
-                            content = {
-                                Icon(
-                                    imageVector = Icons.Filled.Search,
-                                    contentDescription = null,
-                                )
-                            }
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = null,
                         )
                     }
-                }
+                },
             )
         },
         expanded = expanded,
