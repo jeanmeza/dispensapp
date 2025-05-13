@@ -62,6 +62,10 @@ dependencies {
     // Hilt
     implementation(libs.google.dagger.hilt.android)
     ksp(libs.google.dagger.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+    // Material 3 Adaptive Navigation Suite
+    implementation(libs.androidx.material3.adaptive.navigation.suite)
+    implementation(libs.androidx.material3.adaptive.navigation)
 
     testImplementation(libs.junit)
 

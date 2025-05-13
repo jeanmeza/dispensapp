@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">DispensApp</string>
     <string name="search_your_items">Search your items</string>
+    <string name="home">Home</string>
+    <string name="categories">Categories</string>
+    <string name="expiring">Expiring</string>
+    <string name="shopping_list">Shopping list</string>
 </resources>
