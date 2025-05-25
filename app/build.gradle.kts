@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.devtools.ksp)
     alias(libs.plugins.google.dagger.hilt.android)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -66,6 +67,8 @@ dependencies {
     // Material 3 Adaptive Navigation Suite
     implementation(libs.androidx.material3.adaptive.navigation.suite)
     implementation(libs.androidx.material3.adaptive.navigation)
+    // Material Icons Extended
+    implementation(libs.androidx.compose.material.iconsExtended)
 
     testImplementation(libs.junit)
 

@@ -9,12 +9,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.jeanmeza.dispensapp.R
-import com.jeanmeza.dispensapp.ui.navigation.NavigationDestination
 
-object CategoriesDestination : NavigationDestination {
-    override val route: String = "category"
-
-    override val titleRes: Int = R.string.categories
+@Composable
+fun CategoriesRoute(modifier: Modifier = Modifier) {
+    CategoriesScreen(modifier)
 }
 
 @Composable

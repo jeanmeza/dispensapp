@@ -9,12 +9,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.jeanmeza.dispensapp.R
-import com.jeanmeza.dispensapp.ui.navigation.NavigationDestination
 
-object ExpiringDestination : NavigationDestination {
-    override val route: String = "expiring"
-
-    override val titleRes: Int = R.string.expiring
+@Composable
+fun ExpiringRoute(modifier: Modifier = Modifier) {
+    ExpiringScreen(modifier)
 }
 
 @Composable

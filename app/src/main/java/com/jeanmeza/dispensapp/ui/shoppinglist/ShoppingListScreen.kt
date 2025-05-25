@@ -9,12 +9,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.jeanmeza.dispensapp.R
-import com.jeanmeza.dispensapp.ui.navigation.NavigationDestination
 
-object ShoppingListDestination : NavigationDestination {
-    override val route: String = "shopping_list"
-
-    override val titleRes: Int = R.string.shopping_list
+@Composable
+fun ShoppingListRoute(modifier: Modifier = Modifier) {
+    ShoppingListScreen(modifier)
 }
 
 @Composable

@@ -8,13 +8,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.jeanmeza.dispensapp.R
-import com.jeanmeza.dispensapp.ui.navigation.NavigationDestination
 
-object HomeDestination : NavigationDestination {
-    override val route: String = "home"
-
-    override val titleRes: Int = R.string.home
+@Composable
+fun HomeRoute(
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel = hiltViewModel(),
+) {
+    HomeScreen(modifier)
 }
 
 @Composable
