@@ -9,7 +9,7 @@ data class ItemEntity(
     @PrimaryKey
     val id: Int,
     @ColumnInfo(name = "category_id")
-    val categoryId: Int,
+    val categoryId: Int?,
     val name: String,
     val quantity: Int,
     @ColumnInfo(name = "expiry_date")
