@@ -36,6 +36,7 @@ import com.jeanmeza.dispensapp.R
 import com.jeanmeza.dispensapp.data.model.Item
 import com.jeanmeza.dispensapp.ui.theme.DispensAppIcons
 import com.jeanmeza.dispensapp.ui.theme.DispensAppTheme
+import com.jeanmeza.dispensapp.ui.theme.Shapes
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -54,25 +55,33 @@ private fun HomeScreen(items: List<Item>, modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = dimensionResource(R.dimen.p_md))
-            .padding(bottom = dimensionResource(R.dimen.p_sm))
             .background(color = MaterialTheme.colorScheme.surface),
     ) {
-        Button(
-            onClick = {},
-            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
-            colors = ButtonDefaults.buttonColors()
-                .copy(containerColor = MaterialTheme.colorScheme.primaryContainer)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = dimensionResource(R.dimen.p_sm)),
+            horizontalArrangement = Arrangement.End
         ) {
-            Icon(
-                imageVector = DispensAppIcons.Add, contentDescription = null,
-                modifier = Modifier.size(ButtonDefaults.IconSize)
-            )
-            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            Text(text = "Add item")
+            Button(
+                onClick = {},
+                contentPadding = ButtonDefaults.TextButtonWithIconContentPadding,
+                shape = Shapes.small,
+                colors = ButtonDefaults.buttonColors()
+                    .copy(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    )
+            ) {
+                Icon(
+                    imageVector = DispensAppIcons.Add, contentDescription = null,
+                    modifier = Modifier.size(ButtonDefaults.IconSize)
+                )
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                Text(text = "Add item")
+            }
         }
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.p_md))
-        ) {
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.p_md))) {
             items(items = items, key = { it.id }) {
                 ItemCard(
                     item = it,
@@ -89,6 +98,7 @@ private fun HomeScreen(items: List<Item>, modifier: Modifier = Modifier) {
 private fun ItemCard(item: Item, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier,
+        shape = Shapes.small,
         colors = CardDefaults.cardColors()
             .copy(
                 containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -138,26 +148,6 @@ private fun ItemCard(item: Item, modifier: Modifier = Modifier) {
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ItemCardPreview() {
-    DispensAppTheme {
-        ItemCard(
-            item = Item(
-                id = 1,
-                categoryId = null,
-                name = "Pasta",
-                quantity = 10,
-                measureUnit = "Kg",
-                expiryDate = LocalDate.now(),
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(80.dp)
-        )
     }
 }
 
