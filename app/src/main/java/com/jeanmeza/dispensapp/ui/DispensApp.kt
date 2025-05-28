@@ -28,7 +28,7 @@ fun DispensApp(
 ) {
     var searchQuery by rememberSaveable { mutableStateOf("") }
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         topBar = {
             DispensAppSearchBar(
                 query = searchQuery,
