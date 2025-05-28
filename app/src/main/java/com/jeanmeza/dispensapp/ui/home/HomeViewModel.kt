@@ -6,11 +6,11 @@ import com.jeanmeza.dispensapp.data.local.entities.asExternalModel
 import com.jeanmeza.dispensapp.data.model.Item
 import com.jeanmeza.dispensapp.data.repository.ItemRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import jakarta.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(itemRepository: ItemRepository) : ViewModel() {
