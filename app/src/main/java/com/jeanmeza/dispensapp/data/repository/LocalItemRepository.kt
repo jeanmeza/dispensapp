@@ -6,23 +6,13 @@ import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
 class LocalItemRepository @Inject constructor(private val itemDao: ItemDao) : ItemRepository {
-    override fun getAllItemsStream(): Flow<List<ItemEntity>> {
-        TODO("Not yet implemented")
-    }
+    override fun getAllItemsStream(): Flow<List<ItemEntity>> = itemDao.getAllItems()
 
-    override suspend fun getItemStream(id: Int): ItemEntity {
-        TODO("Not yet implemented")
-    }
+    override suspend fun getItem(id: Int): ItemEntity = itemDao.getItem(id)
 
-    override suspend fun insertItem(item: ItemEntity) {
-        TODO("Not yet implemented")
-    }
+    override suspend fun insert(item: ItemEntity) = itemDao.insert(item)
 
-    override suspend fun deleteItem(item: ItemEntity) {
-        TODO("Not yet implemented")
-    }
+    override suspend fun delete(item: ItemEntity) = itemDao.delete(item)
 
-    override suspend fun updateItem(item: ItemEntity) {
-        TODO("Not yet implemented")
-    }
+    override suspend fun update(item: ItemEntity) = itemDao.update(item)
 }

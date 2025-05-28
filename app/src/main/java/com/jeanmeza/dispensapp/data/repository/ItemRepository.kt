@@ -12,20 +12,20 @@ interface ItemRepository {
     /**
      * Retrieve an item from the given data source that matches with the [id].
      */
-    suspend fun getItemStream(id: Int): ItemEntity
+    suspend fun getItem(id: Int): ItemEntity
 
     /**
      * Insert item in the data source
      */
-    suspend fun insertItem(item: ItemEntity)
+    suspend fun insert(item: ItemEntity)
 
     /**
      * Delete item from the data source
      */
-    suspend fun deleteItem(item: ItemEntity)
+    suspend fun delete(item: ItemEntity)
 
     /**
      * Update item in the data source
      */
-    suspend fun updateItem(item: ItemEntity)
+    suspend fun update(item: ItemEntity)
 }
