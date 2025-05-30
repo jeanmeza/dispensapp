@@ -13,6 +13,7 @@ import com.jeanmeza.dispensapp.ui.shoppinglist.navigation.shoppingListScreen
 @Composable
 fun DispensAppNavHost(
     appState: DispensAppState,
+    onAddItemClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val navController = appState.navController
@@ -21,7 +22,9 @@ fun DispensAppNavHost(
         startDestination = HomeRoute,
         modifier = modifier
     ) {
-        homeScreen()
+        homeScreen(
+            onAddItemClick = onAddItemClick
+        )
         categoriesScreen()
         expiringScreen()
         shoppingListScreen()

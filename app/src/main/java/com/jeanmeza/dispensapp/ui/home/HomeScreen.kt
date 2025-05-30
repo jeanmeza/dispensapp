@@ -42,15 +42,24 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun HomeRoute(
+    onAddItemClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val homeUiState by viewModel.homeUiState.collectAsState()
-    HomeScreen(homeUiState.items, modifier)
+    HomeScreen(
+        items = homeUiState.items,
+        onAddItemClick = onAddItemClick,
+        modifier = modifier,
+    )
 }
 
 @Composable
-private fun HomeScreen(items: List<Item>, modifier: Modifier = Modifier) {
+private fun HomeScreen(
+    items: List<Item>,
+    onAddItemClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -64,7 +73,7 @@ private fun HomeScreen(items: List<Item>, modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.End
         ) {
             Button(
-                onClick = {},
+                onClick = onAddItemClick,
                 contentPadding = ButtonDefaults.TextButtonWithIconContentPadding,
                 shape = Shapes.small,
                 colors = ButtonDefaults.buttonColors()
@@ -181,7 +190,7 @@ fun HomeScreenPreview() {
         ),
     )
     DispensAppTheme {
-        HomeScreen(items)
+        HomeScreen(items, {})
     }
 }
 
@@ -216,6 +225,6 @@ fun HomeScreenPreviewDark() {
         ),
     )
     DispensAppTheme(darkTheme = true) {
-        HomeScreen(items)
+        HomeScreen(items, {})
     }
 }

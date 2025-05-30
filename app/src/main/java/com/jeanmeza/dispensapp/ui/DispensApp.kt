@@ -17,6 +17,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import com.jeanmeza.dispensapp.ui.component.DispensAppSearchBar
+import com.jeanmeza.dispensapp.ui.item.ItemDialog
 import com.jeanmeza.dispensapp.ui.navigation.DispensAppNavHost
 import kotlin.reflect.KClass
 
@@ -27,6 +28,7 @@ fun DispensApp(
     modifier: Modifier = Modifier,
 ) {
     var searchQuery by rememberSaveable { mutableStateOf("") }
+    var showAddItemDialog by rememberSaveable { mutableStateOf(false) }
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
@@ -37,6 +39,9 @@ fun DispensApp(
             )
         }
     ) { innerPadding ->
+        if (showAddItemDialog) {
+            ItemDialog(onDismiss = { showAddItemDialog = false })
+        }
         val currentDestination = appState.currentDestination
         NavigationSuiteScaffold(
             navigationSuiteItems = {
@@ -61,7 +66,10 @@ fun DispensApp(
             },
             modifier = Modifier.padding(innerPadding)
         ) {
-            DispensAppNavHost(appState)
+            DispensAppNavHost(
+                appState = appState,
+                onAddItemClick = { showAddItemDialog = true }
+            )
         }
     }
 }

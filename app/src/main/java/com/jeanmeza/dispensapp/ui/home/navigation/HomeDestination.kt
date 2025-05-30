@@ -12,8 +12,10 @@ data object HomeRoute
 
 fun NavController.navigateToHome(navOptions: NavOptions) = navigate(route = HomeRoute, navOptions)
 
-fun NavGraphBuilder.homeScreen() {
+fun NavGraphBuilder.homeScreen(
+    onAddItemClick: () -> Unit,
+) {
     composable<HomeRoute> {
-        HomeRoute()
+        HomeRoute(onAddItemClick = onAddItemClick)
     }
 }
