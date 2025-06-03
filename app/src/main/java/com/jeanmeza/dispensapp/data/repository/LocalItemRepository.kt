@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class LocalItemRepository @Inject constructor(private val itemDao: ItemDao) : ItemRepository {
-    override fun getAllItemsStream(): Flow<List<ItemEntity>> = itemDao.getAllItems()
+    override fun getAllItemsStream(): Flow<List<ItemEntity>> = itemDao.getAllItemsStream()
 
     override suspend fun getItem(id: Int): ItemEntity = itemDao.getItem(id)
 
