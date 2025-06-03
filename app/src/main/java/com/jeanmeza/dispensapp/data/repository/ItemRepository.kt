@@ -15,17 +15,13 @@ interface ItemRepository {
     suspend fun getItem(id: Int): ItemEntity
 
     /**
-     * Insert item in the data source
+     * Insert or update an item in the data source
      */
-    suspend fun insert(item: ItemEntity)
+    suspend fun upsert(item: ItemEntity)
 
     /**
      * Delete item from the data source
      */
     suspend fun delete(item: ItemEntity)
 
-    /**
-     * Update item in the data source
-     */
-    suspend fun update(item: ItemEntity)
 }

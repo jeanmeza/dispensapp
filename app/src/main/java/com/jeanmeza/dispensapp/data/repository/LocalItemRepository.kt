@@ -10,9 +10,8 @@ class LocalItemRepository @Inject constructor(private val itemDao: ItemDao) : It
 
     override suspend fun getItem(id: Int): ItemEntity = itemDao.getItem(id)
 
-    override suspend fun insert(item: ItemEntity) = itemDao.insert(item)
+    override suspend fun upsert(item: ItemEntity) = itemDao.upsert(item)
 
     override suspend fun delete(item: ItemEntity) = itemDao.delete(item)
 
-    override suspend fun update(item: ItemEntity) = itemDao.update(item)
 }
