@@ -46,7 +46,7 @@ fun ItemRoute(
     viewModel: ItemScreenViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.itemUiState.collectAsState()
-    ItemScreen(item = uiState.item!!)
+    ItemScreen(item = uiState.item)
 }
 
 @OptIn(ExperimentalTime::class)
