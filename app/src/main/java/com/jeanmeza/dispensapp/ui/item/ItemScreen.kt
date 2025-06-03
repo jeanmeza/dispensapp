@@ -164,7 +164,7 @@ fun convertMillisToDate(millis: Long): String {
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun ItemDialogPreview() {
+fun ItemScreenPreview() {
     val item = Item(
         id = 0,
         categoryId = 0,
