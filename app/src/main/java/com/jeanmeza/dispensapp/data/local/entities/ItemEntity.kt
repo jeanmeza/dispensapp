@@ -8,7 +8,7 @@ import java.time.Instant
 
 @Entity(tableName = "item")
 data class ItemEntity(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     val id: Int,
     @ColumnInfo(name = "category_id")
     val categoryId: Int?,

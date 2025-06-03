@@ -11,18 +11,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(itemRepository: ItemRepository) : ViewModel() {
-    companion object {
-        private const val TIMEOUT_MILLIS = 5_000L
-    }
-
+class HomeViewModel @Inject constructor(
+    private val itemRepository: ItemRepository,
+) : ViewModel() {
     val homeUiState: StateFlow<HomeUiState> =
         itemRepository.getAllItemsStream().map { HomeUiState(it.asExternalModel()) }
             .stateIn(
                 scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+                started = SharingStarted.WhileSubscribed(5.seconds.inWholeMilliseconds),
                 initialValue = HomeUiState()
             )
 

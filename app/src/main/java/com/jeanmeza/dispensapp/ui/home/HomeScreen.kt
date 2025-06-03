@@ -1,6 +1,7 @@
 package com.jeanmeza.dispensapp.ui.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,6 +43,7 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun HomeRoute(
+    onItemClick: (Int) -> Unit,
     onAddItemClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
@@ -49,6 +51,7 @@ fun HomeRoute(
     val homeUiState by viewModel.homeUiState.collectAsState()
     HomeScreen(
         items = homeUiState.items,
+        onItemClick = onItemClick,
         onAddItemClick = onAddItemClick,
         modifier = modifier,
     )
@@ -57,6 +60,7 @@ fun HomeRoute(
 @Composable
 private fun HomeScreen(
     items: List<Item>,
+    onItemClick: (Int) -> Unit,
     onAddItemClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -96,6 +100,7 @@ private fun HomeScreen(
                     item = it,
                     modifier = Modifier
                         .fillMaxWidth()
+                        .clickable(onClick = { onItemClick(it.id) })
                         .height(80.dp)
                 )
             }
@@ -190,7 +195,11 @@ fun HomeScreenPreview() {
         ),
     )
     DispensAppTheme {
-        HomeScreen(items, {})
+        HomeScreen(
+            items = items,
+            onItemClick = {},
+            onAddItemClick = {},
+        )
     }
 }
 
@@ -224,7 +233,11 @@ fun HomeScreenPreviewDark() {
             expiryDate = LocalDate.now().plusDays(4),
         ),
     )
-    DispensAppTheme(darkTheme = true) {
-        HomeScreen(items, {})
+    DispensAppTheme {
+        HomeScreen(
+            items = items,
+            onItemClick = {},
+            onAddItemClick = {},
+        )
     }
 }

@@ -8,12 +8,13 @@ import com.jeanmeza.dispensapp.ui.categories.navigation.categoriesScreen
 import com.jeanmeza.dispensapp.ui.expiring.navigation.expiringScreen
 import com.jeanmeza.dispensapp.ui.home.navigation.HomeRoute
 import com.jeanmeza.dispensapp.ui.home.navigation.homeScreen
+import com.jeanmeza.dispensapp.ui.item.navigation.itemScreen
+import com.jeanmeza.dispensapp.ui.item.navigation.navigateToItem
 import com.jeanmeza.dispensapp.ui.shoppinglist.navigation.shoppingListScreen
 
 @Composable
 fun DispensAppNavHost(
     appState: DispensAppState,
-    onAddItemClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val navController = appState.navController
@@ -23,10 +24,12 @@ fun DispensAppNavHost(
         modifier = modifier
     ) {
         homeScreen(
-            onAddItemClick = onAddItemClick
+            onItemClick = navController::navigateToItem,
+            onAddItemClick = navController::navigateToItem,
         )
         categoriesScreen()
         expiringScreen()
         shoppingListScreen()
+        itemScreen()
     }
 }
