@@ -53,6 +53,7 @@ fun ItemRoute(
     val uiState by viewModel.itemUiState.collectAsState()
     ItemScreen(
         item = uiState.item,
+        quantityInput = uiState.quantityInput,
         onNameChange = viewModel::onNameChange,
         onMeasureUnitChange = viewModel::onMeasureUnitChange,
         onExpiryDateChange = viewModel::onExpiryDateChange,
@@ -65,6 +66,7 @@ fun ItemRoute(
 @Composable
 fun ItemScreen(
     item: Item,
+    quantityInput: String,
     onNameChange: (String) -> Unit,
     onMeasureUnitChange: (String) -> Unit,
     onExpiryDateChange: (Long?) -> Unit,
@@ -157,7 +159,7 @@ fun ItemScreen(
                     },
                 )
                 TextField(
-                    value = item.quantity.toString(),
+                    value = quantityInput,
                     onValueChange = onQuantityChange,
                     modifier = Modifier.weight(1f),
                     label = { Text(stringResource(R.string.qty)) },
@@ -214,6 +216,7 @@ fun ItemScreenPreview() {
     DispensAppTheme {
         ItemScreen(
             item = item,
+            quantityInput = "",
             onNameChange = {},
             onMeasureUnitChange = {},
             onExpiryDateChange = {},

@@ -74,27 +74,43 @@ class ItemScreenViewModel @Inject constructor(
     }
 
     fun onQuantityChange(quantity: String) {
+        val digits = quantity.filter { it.isDigit() }
         _itemUiState.update {
-            // FIXME: breaks when the user deletes the number
-            it.copy(item = it.item.copy(quantity = quantity.toInt()))
+            it.copy(quantityInput = digits)
         }
     }
 
     fun onSaveClicked() {
+        val currentItem = _itemUiState.value.item
+        val quantity = _itemUiState.value.quantityInput.toIntOrNull()
+        if (currentItem.name.isBlank()) {
+            _itemUiState.update { it.copy(error = "Name cannot be empty") }
+            return
+        }
+        if (currentItem.measureUnit.isBlank()) {
+            _itemUiState.update { it.copy(error = "Measure unit cannot be empty") }
+            return
+        }
+        if (quantity == null || quantity <= 0) {
+            _itemUiState.update { it.copy(error = "Quantity must be a positive number") }
+            return
+        }
+        val itemToSave = currentItem.copy(quantity = quantity)
         viewModelScope.launch {
-            val item = itemUiState.value.item
-            Log.d(TAG, "onSaveClicked: $item")
-            itemRepository.upsert(item.asEntity())
+            Log.d(TAG, "onSaveClicked: $itemToSave")
+            itemRepository.upsert(itemToSave.asEntity())
         }
     }
 }
 
 data class ItemScreenUiState(
-    val item: Item
+    val item: Item,
+    val quantityInput: String = item.quantity.toString(),
+    val error: String? = null,
 ) {
     companion object {
-        fun new(): ItemScreenUiState = ItemScreenUiState(
-            Item(
+        fun new(): ItemScreenUiState {
+            val item = Item(
                 id = 0,
                 categoryId = null,
                 name = "",
@@ -102,6 +118,10 @@ data class ItemScreenUiState(
                 measureUnit = "",
                 expiryDate = null,
             )
-        )
+            return ItemScreenUiState(
+                item = item,
+                quantityInput = item.quantity.toString(),
+            )
+        }
     }
 }
