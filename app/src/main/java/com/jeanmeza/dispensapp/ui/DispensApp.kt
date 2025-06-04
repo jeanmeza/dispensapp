@@ -1,7 +1,15 @@
 package com.jeanmeza.dispensapp.ui
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -26,42 +34,65 @@ fun DispensApp(
     appState: DispensAppState,
     modifier: Modifier = Modifier,
 ) {
-    var searchQuery by rememberSaveable { mutableStateOf("") }
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        topBar = {
-            DispensAppSearchBar(
-                query = searchQuery,
-                onQueryChange = { searchQuery = it },
-                onSearch = {},
-            )
-        }
-    ) { innerPadding ->
-        val currentDestination = appState.currentDestination
-        NavigationSuiteScaffold(
-            navigationSuiteItems = {
-                appState.topLevelDestinations.forEachIndexed { idx, destination ->
-                    val selected = currentDestination.isRouteInHierarchy(destination.route)
-                    item(
-                        selected = selected,
-                        onClick = {
-                            appState.navigateToTopLevelDestination(destination)
-                        },
-                        icon = {
-                            Icon(
-                                imageVector =
-                                    if (selected) destination.selectedIcon
-                                    else destination.unselectedIcon,
-                                contentDescription = null
-                            )
-                        },
-                        label = { Text(text = stringResource(destination.iconTextId)) },
+    val currentDestination = appState.currentDestination
+    NavigationSuiteScaffold(
+        navigationSuiteItems = {
+            appState.topLevelDestinations.forEachIndexed { idx, destination ->
+                val selected = currentDestination.isRouteInHierarchy(destination.route)
+                val icon =
+                    if (selected) destination.selectedIcon else destination.unselectedIcon
+                item(
+                    selected = selected,
+                    onClick = {
+                        appState.navigateToTopLevelDestination(destination)
+                    },
+                    icon = {
+                        Icon(
+                            imageVector = icon,
+                            contentDescription = null
+                        )
+                    },
+                    label = { Text(text = stringResource(destination.iconTextId)) },
+                )
+            }
+        },
+    ) {
+        Scaffold(
+            modifier = modifier.fillMaxSize(),
+            contentWindowInsets = WindowInsets(0, 0, 0, 0)
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .consumeWindowInsets(innerPadding)
+                    .windowInsetsPadding(
+                        WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)
+                    ),
+            ) {
+                val destination = appState.currentTopLevelDestination
+                var shouldShowTopAppBar = false
+                if (destination != null) {
+                    shouldShowTopAppBar = true
+                    var searchQuery by rememberSaveable { mutableStateOf("") }
+                    DispensAppSearchBar(
+                        query = searchQuery,
+                        onQueryChange = { searchQuery = it },
+                        onSearch = {},
                     )
                 }
-            },
-            modifier = Modifier.padding(innerPadding)
-        ) {
-            DispensAppNavHost(appState = appState)
+                Box(
+                    modifier = Modifier.consumeWindowInsets(
+                        if (shouldShowTopAppBar) {
+                            WindowInsets.safeDrawing.only(WindowInsetsSides.Top)
+                        } else {
+                            WindowInsets(0, 0, 0, 0)
+                        }
+                    )
+                ) {
+                    DispensAppNavHost(appState = appState)
+                }
+            }
         }
     }
 }
