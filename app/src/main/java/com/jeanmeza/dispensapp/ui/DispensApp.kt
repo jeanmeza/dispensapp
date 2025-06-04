@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -25,7 +26,9 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import com.jeanmeza.dispensapp.ui.component.DispensAppSearchBar
+import com.jeanmeza.dispensapp.ui.item.navigation.navigateToItem
 import com.jeanmeza.dispensapp.ui.navigation.DispensAppNavHost
+import com.jeanmeza.dispensapp.ui.theme.DispensAppIcons
 import kotlin.reflect.KClass
 
 
@@ -57,8 +60,19 @@ fun DispensApp(
             }
         },
     ) {
+        val destination = appState.currentTopLevelDestination
         Scaffold(
             modifier = modifier.fillMaxSize(),
+            floatingActionButton = {
+                if (destination != null) {
+                    FloatingActionButton(onClick = { appState.navController.navigateToItem() }) {
+                        Icon(
+                            imageVector = DispensAppIcons.Add,
+                            contentDescription = null,
+                        )
+                    }
+                }
+            },
             contentWindowInsets = WindowInsets(0, 0, 0, 0)
         ) { innerPadding ->
             Column(
@@ -70,7 +84,6 @@ fun DispensApp(
                         WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)
                     ),
             ) {
-                val destination = appState.currentTopLevelDestination
                 var shouldShowTopAppBar = false
                 if (destination != null) {
                     shouldShowTopAppBar = true
@@ -82,13 +95,14 @@ fun DispensApp(
                     )
                 }
                 Box(
-                    modifier = Modifier.consumeWindowInsets(
-                        if (shouldShowTopAppBar) {
-                            WindowInsets.safeDrawing.only(WindowInsetsSides.Top)
-                        } else {
-                            WindowInsets(0, 0, 0, 0)
-                        }
-                    )
+                    modifier = Modifier
+                        .consumeWindowInsets(
+                            if (shouldShowTopAppBar) {
+                                WindowInsets.safeDrawing.only(WindowInsetsSides.Top)
+                            } else {
+                                WindowInsets(0, 0, 0, 0)
+                            }
+                        )
                 ) {
                     DispensAppNavHost(appState = appState)
                 }

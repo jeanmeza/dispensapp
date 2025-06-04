@@ -25,7 +25,6 @@ fun DispensAppNavHost(
     ) {
         homeScreen(
             onItemClick = navController::navigateToItem,
-            onAddItemClick = navController::navigateToItem,
         )
         categoriesScreen()
         expiringScreen()
