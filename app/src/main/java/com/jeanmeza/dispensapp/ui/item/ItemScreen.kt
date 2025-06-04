@@ -25,7 +25,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -38,6 +37,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jeanmeza.dispensapp.R
 import com.jeanmeza.dispensapp.data.model.Item
 import com.jeanmeza.dispensapp.ui.theme.DispensAppTheme
@@ -50,7 +50,7 @@ import kotlin.time.ExperimentalTime
 fun ItemRoute(
     viewModel: ItemScreenViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.itemUiState.collectAsState()
+    val uiState by viewModel.itemUiState.collectAsStateWithLifecycle()
     ItemScreen(
         item = uiState.item,
         quantityInput = uiState.quantityInput,
