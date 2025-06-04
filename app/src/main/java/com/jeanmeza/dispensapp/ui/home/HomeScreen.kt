@@ -59,7 +59,7 @@ private fun HomeScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = dimensionResource(R.dimen.p_md))
+            .padding(dimensionResource(R.dimen.p_md))
             .background(color = MaterialTheme.colorScheme.surface),
     ) {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.p_md))) {
@@ -162,7 +162,7 @@ fun HomeScreenPreview() {
             expiryDate = null,
         ),
     )
-    DispensAppTheme {
+    DispensAppTheme(darkTheme = false, dynamicColor = false) {
         HomeScreen(
             items = items,
             onItemClick = {},
@@ -200,7 +200,7 @@ fun HomeScreenPreviewDark() {
             expiryDate = LocalDate.now().plusDays(4),
         ),
     )
-    DispensAppTheme {
+    DispensAppTheme(darkTheme = true, dynamicColor = false) {
         HomeScreen(
             items = items,
             onItemClick = {},
