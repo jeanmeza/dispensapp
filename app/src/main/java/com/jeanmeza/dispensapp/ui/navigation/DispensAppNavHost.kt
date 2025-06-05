@@ -29,6 +29,8 @@ fun DispensAppNavHost(
         categoriesScreen()
         expiringScreen()
         shoppingListScreen()
-        itemScreen()
+        itemScreen(
+            onBackClicked = navController::popBackStack
+        )
     }
 }

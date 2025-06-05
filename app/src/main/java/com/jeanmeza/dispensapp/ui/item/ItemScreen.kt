@@ -1,12 +1,14 @@
 package com.jeanmeza.dispensapp.ui.item
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -29,7 +31,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -40,6 +41,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jeanmeza.dispensapp.R
 import com.jeanmeza.dispensapp.data.model.Item
+import com.jeanmeza.dispensapp.ui.theme.DispensAppIcons
 import com.jeanmeza.dispensapp.ui.theme.DispensAppTheme
 import java.time.Instant
 import java.time.ZoneId
@@ -48,7 +50,8 @@ import kotlin.time.ExperimentalTime
 
 @Composable
 fun ItemRoute(
-    viewModel: ItemScreenViewModel = hiltViewModel()
+    onBackClicked: () -> Unit,
+    viewModel: ItemScreenViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.itemUiState.collectAsStateWithLifecycle()
     ItemScreen(
@@ -59,6 +62,7 @@ fun ItemRoute(
         onExpiryDateChange = viewModel::onExpiryDateChange,
         onQuantityChange = viewModel::onQuantityChange,
         onSaveClicked = viewModel::onSaveClicked,
+        onBackClicked = onBackClicked,
     )
 }
 
@@ -72,6 +76,7 @@ fun ItemScreen(
     onExpiryDateChange: (Long?) -> Unit,
     onQuantityChange: (String) -> Unit,
     onSaveClicked: () -> Unit,
+    onBackClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var category by rememberSaveable { mutableStateOf("") }
@@ -80,27 +85,33 @@ fun ItemScreen(
         initialSelectedDateMillis = Instant.now().toEpochMilli()
     )
     var expiryDate = datePickerState.selectedDateMillis?.let { convertMillisToDate(it) } ?: ""
+    val paddingMd = dimensionResource(R.dimen.p_md)
+    val paddingSm = dimensionResource(R.dimen.p_sm)
     Scaffold(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .statusBarsPadding(),
         topBar = {
-            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
-                OutlinedButton(
-                    onClick = onSaveClicked,
-                    colors = ButtonDefaults.outlinedButtonColors().copy(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            ItemScreenTopBar(
+                onBackClicked = onBackClicked,
+                onSaveClicked = onSaveClicked,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = paddingSm,
+                        end = paddingMd,
+                        bottom = paddingSm
                     )
-                ) {
-                    Text(stringResource(R.string.save))
-                }
-            }
-        }
+            )
+        },
+        contentWindowInsets = WindowInsets(paddingMd, paddingMd, paddingMd, paddingMd)
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(paddingValues),
+                .padding(paddingValues)
+                .consumeWindowInsets(paddingValues),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.p_md))
         ) {
             TextField(
@@ -197,6 +208,31 @@ fun ItemScreen(
     }
 }
 
+@Composable
+fun ItemScreenTopBar(
+    onBackClicked: () -> Unit,
+    onSaveClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(modifier = modifier, horizontalArrangement = Arrangement.SpaceBetween) {
+        IconButton(onClick = onBackClicked) {
+            Icon(
+                imageVector = DispensAppIcons.ArrowBack,
+                contentDescription = null,
+            )
+        }
+        OutlinedButton(
+            onClick = onSaveClicked,
+            colors = ButtonDefaults.outlinedButtonColors().copy(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            )
+        ) {
+            Text(stringResource(R.string.save))
+        }
+    }
+}
+
 fun convertMillisToDate(millis: Long): String {
     val formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu")
     return formatter.format(Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()))
@@ -222,6 +258,7 @@ fun ItemScreenPreview() {
             onExpiryDateChange = {},
             onQuantityChange = {},
             onSaveClicked = {},
+            onBackClicked = {},
         )
     }
 }

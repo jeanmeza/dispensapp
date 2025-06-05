@@ -7,8 +7,6 @@ import androidx.navigation.compose.composable
 import com.jeanmeza.dispensapp.ui.item.ItemRoute
 import kotlinx.serialization.Serializable
 
-const val ITEM_ID_KEY = "itemId"
-
 @Serializable
 data class ItemRoute(
     val itemId: Int? = null,
@@ -19,8 +17,8 @@ fun NavController.navigateToItem(
     navOptions: NavOptions? = null,
 ) = navigate(route = ItemRoute(itemId), navOptions)
 
-fun NavGraphBuilder.itemScreen() {
-    composable<ItemRoute>() {
-        ItemRoute()
+fun NavGraphBuilder.itemScreen(onBackClicked: () -> Unit) {
+    composable<ItemRoute> {
+        ItemRoute(onBackClicked = onBackClicked)
     }
 }
