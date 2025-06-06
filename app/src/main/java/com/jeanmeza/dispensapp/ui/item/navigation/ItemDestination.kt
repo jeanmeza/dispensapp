@@ -17,8 +17,8 @@ fun NavController.navigateToItem(
     navOptions: NavOptions? = null,
 ) = navigate(route = ItemRoute(itemId), navOptions)
 
-fun NavGraphBuilder.itemScreen(onBackClicked: () -> Unit) {
+fun NavGraphBuilder.itemScreen(onBackClicked: () -> Unit, afterDelete: () -> Unit) {
     composable<ItemRoute> {
-        ItemRoute(onBackClicked = onBackClicked)
+        ItemRoute(onBackClicked = onBackClicked, afterDelete = {})
     }
 }

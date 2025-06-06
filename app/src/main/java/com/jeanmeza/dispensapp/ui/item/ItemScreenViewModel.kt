@@ -101,6 +101,13 @@ class ItemScreenViewModel @Inject constructor(
             itemRepository.upsert(itemToSave.asEntity())
         }
     }
+
+    fun onDeleteClicked() {
+        viewModelScope.launch {
+            itemRepository.delete(_itemUiState.value.item.asEntity())
+        }
+    }
+
 }
 
 data class ItemScreenUiState(

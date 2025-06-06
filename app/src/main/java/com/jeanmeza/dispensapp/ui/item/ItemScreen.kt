@@ -1,8 +1,10 @@
 package com.jeanmeza.dispensapp.ui.item
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -51,10 +53,12 @@ import kotlin.time.ExperimentalTime
 @Composable
 fun ItemRoute(
     onBackClicked: () -> Unit,
+    afterDelete: () -> Unit,
     viewModel: ItemScreenViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.itemUiState.collectAsStateWithLifecycle()
     ItemScreen(
+        isEditing = viewModel.isEditing,
         item = uiState.item,
         quantityInput = uiState.quantityInput,
         onNameChange = viewModel::onNameChange,
@@ -62,6 +66,10 @@ fun ItemRoute(
         onExpiryDateChange = viewModel::onExpiryDateChange,
         onQuantityChange = viewModel::onQuantityChange,
         onSaveClicked = viewModel::onSaveClicked,
+        onDeleteClicked = {
+            viewModel.onDeleteClicked()
+            afterDelete()
+        },
         onBackClicked = onBackClicked,
     )
 }
@@ -69,6 +77,7 @@ fun ItemRoute(
 @OptIn(ExperimentalTime::class)
 @Composable
 fun ItemScreen(
+    isEditing: Boolean,
     item: Item,
     quantityInput: String,
     onNameChange: (String) -> Unit,
@@ -77,6 +86,7 @@ fun ItemScreen(
     onQuantityChange: (String) -> Unit,
     onSaveClicked: () -> Unit,
     onBackClicked: () -> Unit,
+    onDeleteClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var category by rememberSaveable { mutableStateOf("") }
@@ -93,7 +103,9 @@ fun ItemScreen(
             .statusBarsPadding(),
         topBar = {
             ItemScreenTopBar(
+                isEditing = isEditing,
                 onBackClicked = onBackClicked,
+                onDeleteClicked = onDeleteClicked,
                 onSaveClicked = onSaveClicked,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -210,8 +222,10 @@ fun ItemScreen(
 
 @Composable
 fun ItemScreenTopBar(
+    isEditing: Boolean,
     onBackClicked: () -> Unit,
     onSaveClicked: () -> Unit,
+    onDeleteClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier, horizontalArrangement = Arrangement.SpaceBetween) {
@@ -220,6 +234,18 @@ fun ItemScreenTopBar(
                 imageVector = DispensAppIcons.ArrowBack,
                 contentDescription = null,
             )
+        }
+        if (isEditing) {
+            Spacer(modifier = Modifier.weight(1f))
+            TextButton(
+                onClick = onDeleteClicked,
+                colors = ButtonDefaults.outlinedButtonColors().copy(
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                )
+            ) {
+                Text(stringResource(R.string.delete))
+            }
+            Box(modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.p_xs))) {}
         }
         OutlinedButton(
             onClick = onSaveClicked,
@@ -249,8 +275,9 @@ fun ItemScreenPreview() {
         measureUnit = "Kg",
         expiryDate = null,
     )
-    DispensAppTheme {
+    DispensAppTheme(dynamicColor = false) {
         ItemScreen(
+            isEditing = true,
             item = item,
             quantityInput = "",
             onNameChange = {},
@@ -258,6 +285,7 @@ fun ItemScreenPreview() {
             onExpiryDateChange = {},
             onQuantityChange = {},
             onSaveClicked = {},
+            onDeleteClicked = {},
             onBackClicked = {},
         )
     }
