@@ -45,10 +45,11 @@ import com.jeanmeza.dispensapp.R
 import com.jeanmeza.dispensapp.data.model.Item
 import com.jeanmeza.dispensapp.ui.theme.DispensAppIcons
 import com.jeanmeza.dispensapp.ui.theme.DispensAppTheme
-import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import kotlin.time.ExperimentalTime
+
+const val ITEM_SCREEN_TAG = "ItemScreen"
 
 @Composable
 fun ItemRoute(
@@ -74,7 +75,6 @@ fun ItemRoute(
     )
 }
 
-@OptIn(ExperimentalTime::class)
 @Composable
 fun ItemScreen(
     isEditing: Boolean,
@@ -91,10 +91,7 @@ fun ItemScreen(
 ) {
     var category by rememberSaveable { mutableStateOf("") }
     var showDatePickerDialog by rememberSaveable { mutableStateOf(false) }
-    val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = Instant.now().toEpochMilli()
-    )
-    var expiryDate = datePickerState.selectedDateMillis?.let { convertMillisToDate(it) } ?: ""
+    var expiryDate = formatDate(item.expiryDate)
     val paddingMd = dimensionResource(R.dimen.p_md)
     val paddingSm = dimensionResource(R.dimen.p_sm)
     Scaffold(
@@ -195,27 +192,11 @@ fun ItemScreen(
         }
 
         if (showDatePickerDialog) {
-            DatePickerDialog(
-                onDismissRequest = { showDatePickerDialog = false },
-                confirmButton = {
-                    TextButton(onClick = {
-                        onExpiryDateChange(datePickerState.selectedDateMillis)
-                        showDatePickerDialog = false
-                    }) {
-                        Text("OK")
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { showDatePickerDialog = false }) {
-                        Text("Cancel")
-                    }
-                }
-            ) {
-                DatePicker(
-                    state = datePickerState,
-                    showModeToggle = false,
-                )
-            }
+            DatePickerModal(
+                initialDate = item.expiryDate,
+                onDateSelected = onExpiryDateChange,
+                onDismiss = { showDatePickerDialog = false }
+            )
         }
     }
 }
@@ -259,9 +240,47 @@ fun ItemScreenTopBar(
     }
 }
 
-fun convertMillisToDate(millis: Long): String {
-    val formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu")
-    return formatter.format(Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()))
+@Composable
+fun DatePickerModal(
+    initialDate: LocalDate?,
+    onDateSelected: (Long?) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = localDateToMillis(initialDate)
+    )
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = {
+                onDateSelected(datePickerState.selectedDateMillis)
+                onDismiss()
+            }) {
+                Text("OK")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    ) {
+        DatePicker(state = datePickerState)
+    }
+}
+
+fun formatDate(date: LocalDate?): String {
+    return when (date) {
+        null -> ""
+        else -> DateTimeFormatter.ofPattern("dd/MM/uuuu").format(date)
+    }
+}
+
+fun localDateToMillis(localDate: LocalDate?): Long? {
+    return when (localDate) {
+        null -> null
+        else -> localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+    }
 }
 
 @Preview(apiLevel = 35, showSystemUi = true, showBackground = true)
