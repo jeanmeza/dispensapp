@@ -13,8 +13,8 @@ data object ExpiringRoute
 fun NavController.navigateToExpiring(navOptions: NavOptions) =
     navigate(route = ExpiringRoute, navOptions)
 
-fun NavGraphBuilder.expiringScreen() {
+fun NavGraphBuilder.expiringScreen(onItemClick: (Int) -> Unit) {
     composable<ExpiringRoute> {
-        ExpiringRoute()
+        ExpiringRoute(onItemClick)
     }
 }

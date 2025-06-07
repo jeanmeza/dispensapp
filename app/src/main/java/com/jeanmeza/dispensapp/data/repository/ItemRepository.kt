@@ -10,6 +10,11 @@ interface ItemRepository {
     fun getAllItemsStream(): Flow<List<ItemEntity>>
 
     /**
+     * Retrieve all the expiring items from the the given data source.
+     */
+    fun getExpiringItemsStream(date: Long): Flow<List<ItemEntity>>
+
+    /**
      * Retrieve an item from the given data source that matches with the [id].
      */
     suspend fun getItem(id: Int): ItemEntity

@@ -12,6 +12,9 @@ interface ItemDao {
     @Query("SELECT * FROM item ORDER BY name ASC")
     fun getAllItemsStream(): Flow<List<ItemEntity>>
 
+    @Query("SELECT * FROM item WHERE expiry_date < :date ORDER BY expiry_date ASC")
+    fun getExpiringItemsStream(date: Long): Flow<List<ItemEntity>>
+
     @Query("SELECT * FROM item WHERE id = :id")
     suspend fun getItem(id: Int): ItemEntity
 
