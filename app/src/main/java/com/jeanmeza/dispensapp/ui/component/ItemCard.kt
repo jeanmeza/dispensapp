@@ -11,13 +11,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,14 +32,15 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun ItemCard(item: Item, modifier: Modifier = Modifier) {
-    Card(
+    ElevatedCard(
         modifier = modifier,
         shape = Shapes.small,
         colors = CardDefaults.cardColors()
             .copy(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                contentColor = MaterialTheme.colorScheme.onSurface
-            )
+                containerColor = itemCardContainerColor(item.expiryDate),
+                contentColor = Color(0xFF1B1C19)  // It's the same as onSurfaceLight
+            ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.p_sm)),
@@ -91,13 +93,29 @@ fun ItemCard(item: Item, modifier: Modifier = Modifier) {
     }
 }
 
+@Composable
+private fun itemCardContainerColor(expiryDate: LocalDate?): Color {
+    if (expiryDate == null) {
+        return Color(0xFFE4FFE0)
+    }
+    var today = LocalDate.now()
+    var sevenDaysFromNow = today.plusDays(7)
+    if (expiryDate.isBefore(today)) {
+        return Color(0xFFFDE9EB)
+    }
+    if (expiryDate.isBefore(sevenDaysFromNow)) {
+        return Color(0xFFFFF2E5)
+    }
+    return Color(0xFFE4FFE0)
+}
+
 private fun formatDate(date: LocalDate): String {
     return date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
 }
 
 @Preview
 @Composable
-fun ItemCardPreviewWithExpiryDate() {
+fun ItemCardPreviewExpired() {
     DispensAppTheme(dynamicColor = false) {
         ItemCard(
             item = Item(
@@ -106,7 +124,43 @@ fun ItemCardPreviewWithExpiryDate() {
                 name = "Pasta",
                 quantity = 12,
                 measureUnit = "Kg",
-                expiryDate = LocalDate.now().plusWeeks(1)
+                expiryDate = LocalDate.now().minusDays(1)
+            ),
+            modifier = Modifier.height(80.dp)
+        )
+    }
+}
+
+@Preview
+@Composable
+fun ItemCardPreviewAboutToExpire() {
+    DispensAppTheme(dynamicColor = false) {
+        ItemCard(
+            item = Item(
+                id = 1,
+                categoryId = null,
+                name = "Pasta",
+                quantity = 12,
+                measureUnit = "Kg",
+                expiryDate = LocalDate.now().plusDays(1)
+            ),
+            modifier = Modifier.height(80.dp)
+        )
+    }
+}
+
+@Preview
+@Composable
+fun ItemCardPreview() {
+    DispensAppTheme(dynamicColor = false) {
+        ItemCard(
+            item = Item(
+                id = 1,
+                categoryId = null,
+                name = "Pasta",
+                quantity = 12,
+                measureUnit = "Kg",
+                expiryDate = LocalDate.now().plusWeeks(2)
             ),
             modifier = Modifier.height(80.dp)
         )

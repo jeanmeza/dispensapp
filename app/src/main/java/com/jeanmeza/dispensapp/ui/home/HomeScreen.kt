@@ -51,7 +51,10 @@ private fun HomeScreen(
             .padding(dimensionResource(R.dimen.p_md))
             .background(color = MaterialTheme.colorScheme.surface),
     ) {
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.p_md))) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.p_md)),
+        ) {
             items(items = items, key = { it.id }) {
                 ItemCard(
                     item = it,
