@@ -70,7 +70,7 @@ fun ItemCard(item: Item, modifier: Modifier = Modifier) {
                     verticalAlignment = Alignment.Bottom,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Box() {
+                    Box {
                         Text(
                             text = "${item.quantity} ${item.measureUnit}",
                             style = MaterialTheme.typography.bodyLarge,
@@ -78,7 +78,7 @@ fun ItemCard(item: Item, modifier: Modifier = Modifier) {
                         )
                     }
                     if (item.expiryDate != null) {
-                        Box() {
+                        Box {
                             Text(
                                 text = "Expires ${formatDate(item.expiryDate)}",
                                 style = MaterialTheme.typography.titleMedium,
