@@ -49,8 +49,6 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-const val ITEM_SCREEN_TAG = "ItemScreen"
-
 @Composable
 fun ItemRoute(
     onBackClicked: () -> Unit,
