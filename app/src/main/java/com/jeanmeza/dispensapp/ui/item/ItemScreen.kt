@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -24,6 +26,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -31,6 +35,7 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -45,6 +50,9 @@ import com.jeanmeza.dispensapp.R
 import com.jeanmeza.dispensapp.data.model.Item
 import com.jeanmeza.dispensapp.ui.theme.DispensAppIcons
 import com.jeanmeza.dispensapp.ui.theme.DispensAppTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -53,10 +61,14 @@ import java.time.format.DateTimeFormatter
 fun ItemRoute(
     onBackClicked: () -> Unit,
     afterDelete: () -> Unit,
+    snackbarHostState: SnackbarHostState,
+    onShowSnackbar: suspend (String, String?) -> Boolean,
     viewModel: ItemScreenViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.itemUiState.collectAsStateWithLifecycle()
     ItemScreen(
+        snackbarHostState = snackbarHostState,
+        onShowSnackbar = onShowSnackbar,
         isEditing = viewModel.isEditing,
         item = uiState.item,
         quantityInput = uiState.quantityInput,
@@ -75,6 +87,8 @@ fun ItemRoute(
 
 @Composable
 fun ItemScreen(
+    snackbarHostState: SnackbarHostState,
+    onShowSnackbar: suspend (String, String?) -> Boolean,
     isEditing: Boolean,
     item: Item,
     quantityInput: String,
@@ -82,7 +96,7 @@ fun ItemScreen(
     onMeasureUnitChange: (String) -> Unit,
     onExpiryDateChange: (Long?) -> Unit,
     onQuantityChange: (String) -> Unit,
-    onSaveClicked: () -> Unit,
+    onSaveClicked: () -> Boolean,
     onBackClicked: () -> Unit,
     onDeleteClicked: () -> Unit,
     modifier: Modifier = Modifier,
@@ -102,6 +116,7 @@ fun ItemScreen(
                 onBackClicked = onBackClicked,
                 onDeleteClicked = onDeleteClicked,
                 onSaveClicked = onSaveClicked,
+                onShowSnackbar = onShowSnackbar,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
@@ -109,6 +124,12 @@ fun ItemScreen(
                         end = paddingMd,
                         bottom = paddingSm
                     )
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing),
             )
         },
         contentWindowInsets = WindowInsets(paddingMd, paddingMd, paddingMd, paddingMd)
@@ -203,8 +224,9 @@ fun ItemScreen(
 fun ItemScreenTopBar(
     isEditing: Boolean,
     onBackClicked: () -> Unit,
-    onSaveClicked: () -> Unit,
+    onSaveClicked: () -> Boolean,
     onDeleteClicked: () -> Unit,
+    onShowSnackbar: suspend (String, String?) -> Boolean,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier, horizontalArrangement = Arrangement.SpaceBetween) {
@@ -227,7 +249,13 @@ fun ItemScreenTopBar(
             Box(modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.p_xs))) {}
         }
         OutlinedButton(
-            onClick = onSaveClicked,
+            onClick = {
+                CoroutineScope(Dispatchers.Main).launch {
+                    if (onSaveClicked()) {
+                        onShowSnackbar("Item saved", null)
+                    }
+                }
+            },
             colors = ButtonDefaults.outlinedButtonColors().copy(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -294,6 +322,8 @@ fun ItemScreenPreview() {
     )
     DispensAppTheme(dynamicColor = false) {
         ItemScreen(
+            snackbarHostState = remember { SnackbarHostState() },
+            onShowSnackbar = { _, _ -> false },
             isEditing = true,
             item = item,
             quantityInput = "",
@@ -301,7 +331,7 @@ fun ItemScreenPreview() {
             onMeasureUnitChange = {},
             onExpiryDateChange = {},
             onQuantityChange = {},
-            onSaveClicked = {},
+            onSaveClicked = { false },
             onDeleteClicked = {},
             onBackClicked = {},
         )

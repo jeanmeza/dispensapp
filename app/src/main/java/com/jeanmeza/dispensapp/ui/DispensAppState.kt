@@ -1,5 +1,8 @@
 package com.jeanmeza.dispensapp.ui
 
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.collectAsState
@@ -25,14 +28,18 @@ import com.jeanmeza.dispensapp.ui.shoppinglist.navigation.navigateToShoppingList
 @Composable
 fun rememberDispensAppState(
     navController: NavHostController = rememberNavController(),
+    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ): DispensAppState {
     return remember(navController) {
-        DispensAppState(navController)
+        DispensAppState(navController, snackBarHostState)
     }
 }
 
 @Stable
-class DispensAppState(val navController: NavHostController) {
+class DispensAppState(
+    val navController: NavHostController,
+    val snackBarHostState: SnackbarHostState
+) {
     private val previousDestination = mutableStateOf<NavDestination?>(null)
 
     val currentDestination: NavDestination?
@@ -72,5 +79,13 @@ class DispensAppState(val navController: NavHostController) {
                 SHOPPING_LIST -> navController.navigateToShoppingList(topLevelNavOptions)
             }
         }
+    }
+
+    suspend fun onShowSnackbar(message: String, action: String?): Boolean {
+        return snackBarHostState.showSnackbar(
+            message = message,
+            actionLabel = action,
+            duration = SnackbarDuration.Short
+        ) == SnackbarResult.ActionPerformed
     }
 }

@@ -1,5 +1,6 @@
 package com.jeanmeza.dispensapp.ui.item.navigation
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -17,8 +18,18 @@ fun NavController.navigateToItem(
     navOptions: NavOptions? = null,
 ) = navigate(route = ItemRoute(itemId), navOptions)
 
-fun NavGraphBuilder.itemScreen(onBackClicked: () -> Unit, afterDelete: () -> Unit) {
+fun NavGraphBuilder.itemScreen(
+    onBackClicked: () -> Unit,
+    afterDelete: () -> Unit,
+    snackbarHostState: SnackbarHostState,
+    onShowSnackbar: suspend (String, String?) -> Boolean,
+) {
     composable<ItemRoute> {
-        ItemRoute(onBackClicked = onBackClicked, afterDelete = {})
+        ItemRoute(
+            onBackClicked = onBackClicked,
+            afterDelete = afterDelete,
+            snackbarHostState = snackbarHostState,
+            onShowSnackbar = onShowSnackbar,
+        )
     }
 }

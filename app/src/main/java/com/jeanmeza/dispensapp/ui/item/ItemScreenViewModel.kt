@@ -80,26 +80,28 @@ class ItemScreenViewModel @Inject constructor(
         }
     }
 
-    fun onSaveClicked() {
+    fun onSaveClicked(): Boolean {
         val currentItem = _itemUiState.value.item
         val quantity = _itemUiState.value.quantityInput.toIntOrNull()
-        if (currentItem.name.isBlank()) {
-            _itemUiState.update { it.copy(error = "Name cannot be empty") }
-            return
+        _itemUiState.update {
+            it.copy(
+                nameHasError = currentItem.name.isBlank(),
+                measureUnitHasError = currentItem.measureUnit.isBlank(),
+                quantityHasError = quantity == null || quantity <= 0
+            )
         }
-        if (currentItem.measureUnit.isBlank()) {
-            _itemUiState.update { it.copy(error = "Measure unit cannot be empty") }
-            return
+        if (_itemUiState.value.nameHasError
+            || _itemUiState.value.measureUnitHasError
+            || _itemUiState.value.quantityHasError
+        ) {
+            return false
         }
-        if (quantity == null || quantity <= 0) {
-            _itemUiState.update { it.copy(error = "Quantity must be a positive number") }
-            return
-        }
-        val itemToSave = currentItem.copy(quantity = quantity)
+        val itemToSave = currentItem.copy(quantity = quantity!!)
         viewModelScope.launch {
             Log.d(TAG, "onSaveClicked: $itemToSave")
             itemRepository.upsert(itemToSave.asEntity())
         }
+        return true
     }
 
     fun onDeleteClicked() {
@@ -113,7 +115,9 @@ class ItemScreenViewModel @Inject constructor(
 data class ItemScreenUiState(
     val item: Item,
     val quantityInput: String = item.quantity.toString(),
-    val error: String? = null,
+    var nameHasError: Boolean = false,
+    var measureUnitHasError: Boolean = false,
+    var quantityHasError: Boolean = false,
 ) {
     companion object {
         fun new(): ItemScreenUiState {
