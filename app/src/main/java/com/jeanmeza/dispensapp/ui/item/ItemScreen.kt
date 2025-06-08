@@ -10,9 +10,7 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -27,15 +25,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -51,7 +47,6 @@ import com.jeanmeza.dispensapp.data.model.Item
 import com.jeanmeza.dispensapp.ui.theme.DispensAppIcons
 import com.jeanmeza.dispensapp.ui.theme.DispensAppTheme
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZoneId
@@ -61,13 +56,12 @@ import java.time.format.DateTimeFormatter
 fun ItemRoute(
     onBackClicked: () -> Unit,
     afterDelete: () -> Unit,
-    snackbarHostState: SnackbarHostState,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     viewModel: ItemScreenViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.itemUiState.collectAsStateWithLifecycle()
+    val coroutineScope = rememberCoroutineScope()
     ItemScreen(
-        snackbarHostState = snackbarHostState,
         onShowSnackbar = onShowSnackbar,
         isEditing = viewModel.isEditing,
         item = uiState.item,
@@ -85,13 +79,13 @@ fun ItemRoute(
             afterDelete()
         },
         onBackClicked = onBackClicked,
+        coroutineScope = coroutineScope,
     )
 }
 
 @Composable
 fun ItemScreen(
     modifier: Modifier = Modifier,
-    snackbarHostState: SnackbarHostState,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     isEditing: Boolean,
     item: Item,
@@ -106,6 +100,7 @@ fun ItemScreen(
     onSaveClicked: () -> Boolean,
     onBackClicked: () -> Unit,
     onDeleteClicked: () -> Unit,
+    coroutineScope: CoroutineScope,
 ) {
     var category by rememberSaveable { mutableStateOf("") }
     var showDatePickerDialog by rememberSaveable { mutableStateOf(false) }
@@ -129,13 +124,8 @@ fun ItemScreen(
                         start = paddingSm,
                         end = paddingMd,
                         bottom = paddingSm
-                    )
-            )
-        },
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing),
+                    ),
+                coroutineScope = coroutineScope,
             )
         },
         contentWindowInsets = WindowInsets(paddingMd, paddingMd, paddingMd, paddingMd)
@@ -237,6 +227,7 @@ fun ItemScreenTopBar(
     onDeleteClicked: () -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     modifier: Modifier = Modifier,
+    coroutineScope: CoroutineScope,
 ) {
     Row(modifier = modifier, horizontalArrangement = Arrangement.SpaceBetween) {
         IconButton(onClick = onBackClicked) {
@@ -259,8 +250,9 @@ fun ItemScreenTopBar(
         }
         OutlinedButton(
             onClick = {
-                CoroutineScope(Dispatchers.Main).launch {
+                coroutineScope.launch {
                     if (onSaveClicked()) {
+                        onBackClicked()
                         onShowSnackbar("Item saved", null)
                     }
                 }
@@ -331,7 +323,6 @@ fun ItemScreenPreview() {
     )
     DispensAppTheme(dynamicColor = false) {
         ItemScreen(
-            snackbarHostState = remember { SnackbarHostState() },
             onShowSnackbar = { _, _ -> false },
             isEditing = true,
             item = item,
@@ -343,6 +334,7 @@ fun ItemScreenPreview() {
             onSaveClicked = { false },
             onDeleteClicked = {},
             onBackClicked = {},
+            coroutineScope = rememberCoroutineScope()
         )
     }
 }

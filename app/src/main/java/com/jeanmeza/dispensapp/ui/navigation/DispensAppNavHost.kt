@@ -34,7 +34,6 @@ fun DispensAppNavHost(
         itemScreen(
             onBackClicked = navController::popBackStack,
             afterDelete = navController::popBackStack,
-            snackbarHostState = appState.snackBarHostState,
             onShowSnackbar = appState::onShowSnackbar,
         )
     }
