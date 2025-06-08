@@ -25,12 +25,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -73,6 +73,9 @@ fun ItemRoute(
         item = uiState.item,
         quantityInput = uiState.quantityInput,
         onNameChange = viewModel::onNameChange,
+        nameHasError = uiState.nameHasError,
+        measureUnitHasError = uiState.measureUnitHasError,
+        quantityHasError = uiState.quantityHasError,
         onMeasureUnitChange = viewModel::onMeasureUnitChange,
         onExpiryDateChange = viewModel::onExpiryDateChange,
         onQuantityChange = viewModel::onQuantityChange,
@@ -87,19 +90,22 @@ fun ItemRoute(
 
 @Composable
 fun ItemScreen(
+    modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     isEditing: Boolean,
     item: Item,
     quantityInput: String,
     onNameChange: (String) -> Unit,
+    nameHasError: Boolean = false,
+    measureUnitHasError: Boolean = false,
+    quantityHasError: Boolean = false,
     onMeasureUnitChange: (String) -> Unit,
     onExpiryDateChange: (Long?) -> Unit,
     onQuantityChange: (String) -> Unit,
     onSaveClicked: () -> Boolean,
     onBackClicked: () -> Unit,
     onDeleteClicked: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     var category by rememberSaveable { mutableStateOf("") }
     var showDatePickerDialog by rememberSaveable { mutableStateOf(false) }
@@ -142,17 +148,18 @@ fun ItemScreen(
                 .consumeWindowInsets(paddingValues),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.p_md))
         ) {
-            TextField(
+            OutlinedTextField(
                 value = item.name,
                 onValueChange = onNameChange,
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(stringResource(R.string.name)) },
+                isError = nameHasError,
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Next,
                 ),
             )
-            TextField(
+            OutlinedTextField(
                 value = category,
                 onValueChange = { category = it },
                 modifier = Modifier.fillMaxWidth(),
@@ -162,11 +169,12 @@ fun ItemScreen(
                     imeAction = ImeAction.Next,
                 ),
             )
-            TextField(
+            OutlinedTextField(
                 value = item.measureUnit,
                 onValueChange = onMeasureUnitChange,
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(stringResource(R.string.measure_unit)) },
+                isError = measureUnitHasError,
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Next,
@@ -174,7 +182,7 @@ fun ItemScreen(
             )
 
             Row(horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.p_sm))) {
-                TextField(
+                OutlinedTextField(
                     value = expiryDate,
                     onValueChange = { },
                     modifier = Modifier
@@ -197,11 +205,12 @@ fun ItemScreen(
                         }
                     },
                 )
-                TextField(
+                OutlinedTextField(
                     value = quantityInput,
                     onValueChange = onQuantityChange,
                     modifier = Modifier.weight(1f),
                     label = { Text(stringResource(R.string.qty)) },
+                    isError = quantityHasError,
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Number,
                     ),
