@@ -75,8 +75,11 @@ fun ItemRoute(
         onQuantityChange = viewModel::onQuantityChange,
         onSaveClicked = viewModel::onSaveClicked,
         onDeleteClicked = {
-            viewModel.onDeleteClicked()
-            afterDelete()
+            coroutineScope.launch {
+                viewModel.onDeleteClicked()
+                onBackClicked()
+                onShowSnackbar("Item deleted", null)
+            }
         },
         onBackClicked = onBackClicked,
         coroutineScope = coroutineScope,
