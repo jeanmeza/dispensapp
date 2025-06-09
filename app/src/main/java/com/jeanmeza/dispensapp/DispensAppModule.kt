@@ -3,8 +3,11 @@ package com.jeanmeza.dispensapp
 import android.content.Context
 import androidx.room.Room
 import com.jeanmeza.dispensapp.data.local.DispensAppDatabase
+import com.jeanmeza.dispensapp.data.local.dao.CategoryDao
 import com.jeanmeza.dispensapp.data.local.dao.ItemDao
+import com.jeanmeza.dispensapp.data.repository.CategoryRepository
 import com.jeanmeza.dispensapp.data.repository.ItemRepository
+import com.jeanmeza.dispensapp.data.repository.LocalCategoryRepository
 import com.jeanmeza.dispensapp.data.repository.LocalItemRepository
 import dagger.Module
 import dagger.Provides
@@ -34,6 +37,18 @@ object DispensAppModule {
     @Singleton
     fun provideItemRepository(itemDao: ItemDao): ItemRepository {
         return LocalItemRepository(itemDao)
-
     }
+
+    @Provides
+    @Singleton
+    fun provideCategoryDao(database: DispensAppDatabase): CategoryDao {
+        return database.categoryDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideCategoryRepository(categoryDao: CategoryDao): CategoryRepository {
+        return LocalCategoryRepository(categoryDao)
+    }
+
 }

@@ -11,6 +11,7 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Settings
 
@@ -19,6 +20,7 @@ object DispensAppIcons {
     val ArrowBack = Icons.AutoMirrored.Rounded.ArrowBack
     val Categories = Icons.Filled.Category
     val CategoriesOutlined = Icons.Outlined.Category
+    val Edit = Icons.Rounded.Edit
     val Expiring = Icons.Filled.Timer
     val ExpiringOutlined = Icons.Outlined.Timer
     val Home = Icons.Filled.Home

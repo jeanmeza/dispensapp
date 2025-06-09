@@ -1,0 +1,19 @@
+package com.jeanmeza.dispensapp.data.local.entities
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.jeanmeza.dispensapp.data.model.Category
+
+@Entity(tableName = "categories")
+data class CategoryEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val name: String,
+)
+
+fun CategoryEntity.asExternalModel() = Category(
+    id = id,
+    name = name,
+)
+
+fun List<CategoryEntity>.asExternalModel() = map(CategoryEntity::asExternalModel)
