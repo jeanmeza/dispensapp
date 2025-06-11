@@ -31,9 +31,9 @@ class CategoryDialogViewModel @Inject constructor(
             )
         }
         if (_categoryDialogUiState.value.nameHasError) {
-            return false;
+            return false
         }
-        categoryRepository.upsert(currentCategory.asEntity())
+        categoryRepository.insert(currentCategory.asEntity())
         return true
     }
 }

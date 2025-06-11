@@ -15,9 +15,14 @@ interface CategoryRepository {
     suspend fun getCategory(id: Int): CategoryEntity
 
     /**
-     * Insert or update an category in the data source
+     * Insert a new category in the data source
      */
-    suspend fun upsert(category: CategoryEntity)
+    suspend fun insert(category: CategoryEntity)
+
+    /**
+     * Update an category in the data source
+     */
+    suspend fun update(category: CategoryEntity)
 
     /**
      * Delete category from the data source

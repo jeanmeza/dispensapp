@@ -13,7 +13,9 @@ class LocalCategoryRepository @Inject constructor(
 
     override suspend fun getCategory(id: Int): CategoryEntity = categoryDao.getCategory(id)
 
-    override suspend fun upsert(category: CategoryEntity) = categoryDao.upsert(category)
+    override suspend fun insert(category: CategoryEntity) = categoryDao.insert(category)
+
+    override suspend fun update(category: CategoryEntity) = categoryDao.update(category)
 
     override suspend fun delete(category: CategoryEntity) = categoryDao.delete(category)
 }
