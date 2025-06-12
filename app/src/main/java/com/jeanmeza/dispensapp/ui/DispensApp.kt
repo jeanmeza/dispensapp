@@ -26,9 +26,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
+import com.jeanmeza.dispensapp.ui.categories.CategoryDialog
 import com.jeanmeza.dispensapp.ui.component.DispensAppSearchBar
 import com.jeanmeza.dispensapp.ui.item.navigation.navigateToItem
 import com.jeanmeza.dispensapp.ui.navigation.DispensAppNavHost
+import com.jeanmeza.dispensapp.ui.navigation.TopLevelDestination
 import com.jeanmeza.dispensapp.ui.theme.DispensAppIcons
 import kotlin.reflect.KClass
 
@@ -39,6 +41,15 @@ fun DispensApp(
     modifier: Modifier = Modifier,
 ) {
     val currentDestination = appState.currentDestination
+    var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
+
+    if (showCategoryDialog) {
+        CategoryDialog(
+            onDismiss = { showCategoryDialog = false },
+            onShowSnackbar = appState::onShowSnackbar
+        )
+    }
+
     NavigationSuiteScaffold(
         navigationSuiteItems = {
             appState.topLevelDestinations.forEachIndexed { idx, destination ->
@@ -71,8 +82,21 @@ fun DispensApp(
                 )
             },
             floatingActionButton = {
-                if (destination != null) {
-                    FloatingActionButton(onClick = { appState.navController.navigateToItem() }) {
+                val function = when (destination) {
+                    TopLevelDestination.HOME,
+                    TopLevelDestination.EXPIRING -> {
+                        { appState.navController.navigateToItem() }
+                    }
+
+                    TopLevelDestination.CATEGORIES -> {
+                        { showCategoryDialog = true }
+                    }
+
+                    TopLevelDestination.SHOPPING_LIST -> TODO()
+                    null -> null
+                }
+                if (function != null) {
+                    FloatingActionButton(onClick = function) {
                         Icon(
                             imageVector = DispensAppIcons.Add,
                             contentDescription = null,
