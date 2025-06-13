@@ -14,4 +14,5 @@
     <string name="qty">Qty</string>
     <string name="measure_unit">Measure unit</string>
     <string name="expiry_date">Expiry date</string>
+    <string name="shop">Shop</string>
 </resources>

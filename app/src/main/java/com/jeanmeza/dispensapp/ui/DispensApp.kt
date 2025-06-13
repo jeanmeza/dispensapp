@@ -28,9 +28,9 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import com.jeanmeza.dispensapp.ui.categories.CategoryDialog
 import com.jeanmeza.dispensapp.ui.component.DispensAppSearchBar
+import com.jeanmeza.dispensapp.ui.component.FabOptionsBottomSheet
 import com.jeanmeza.dispensapp.ui.item.navigation.navigateToItem
 import com.jeanmeza.dispensapp.ui.navigation.DispensAppNavHost
-import com.jeanmeza.dispensapp.ui.navigation.TopLevelDestination
 import com.jeanmeza.dispensapp.ui.theme.DispensAppIcons
 import kotlin.reflect.KClass
 
@@ -42,6 +42,16 @@ fun DispensApp(
 ) {
     val currentDestination = appState.currentDestination
     var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
+    var showModalBottomSheet by rememberSaveable { mutableStateOf(false) }
+
+    if (showModalBottomSheet) {
+        FabOptionsBottomSheet(
+            onDismiss = { showModalBottomSheet = false },
+            onItemOptionSelected = { appState.navController.navigateToItem() },
+            onCategoryOptionSelected = { showCategoryDialog = true },
+            onShoppingListOptionSelected = {},
+        )
+    }
 
     if (showCategoryDialog) {
         CategoryDialog(
@@ -82,21 +92,8 @@ fun DispensApp(
                 )
             },
             floatingActionButton = {
-                val function = when (destination) {
-                    TopLevelDestination.HOME,
-                    TopLevelDestination.EXPIRING -> {
-                        { appState.navController.navigateToItem() }
-                    }
-
-                    TopLevelDestination.CATEGORIES -> {
-                        { showCategoryDialog = true }
-                    }
-
-                    TopLevelDestination.SHOPPING_LIST -> TODO()
-                    null -> null
-                }
-                if (function != null) {
-                    FloatingActionButton(onClick = function) {
+                if (destination != null) {
+                    FloatingActionButton(onClick = { showModalBottomSheet = true }) {
                         Icon(
                             imageVector = DispensAppIcons.Add,
                             contentDescription = null,
