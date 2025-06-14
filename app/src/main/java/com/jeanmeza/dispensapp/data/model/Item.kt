@@ -5,18 +5,17 @@ import kotlinx.datetime.Instant
 
 data class Item(
     val id: Int,
-    val category: Category? = null,
     val name: String,
     val quantity: Int,
     val measureUnit: String,
-    val expiryDate: Instant? = null,
+    val expiryDate: Instant?,
+    val categories: List<Category>,
 )
 
 fun Item.asEntity() = ItemEntity(
     id = id,
-    categoryId = category?.id,
     name = name,
     quantity = quantity,
     measureUnit = measureUnit,
-    expiryDate = expiryDate
+    expiryDate = expiryDate,
 )

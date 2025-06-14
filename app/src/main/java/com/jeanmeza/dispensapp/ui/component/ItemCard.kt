@@ -24,7 +24,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jeanmeza.dispensapp.R
-import com.jeanmeza.dispensapp.data.model.Category
 import com.jeanmeza.dispensapp.data.model.Item
 import com.jeanmeza.dispensapp.ui.formattedDate
 import com.jeanmeza.dispensapp.ui.theme.DispensAppTheme
@@ -120,11 +119,11 @@ fun ItemCardPreviewExpired() {
         ItemCard(
             item = Item(
                 id = 1,
-                category = Category(1, "Dispensa"),
                 name = "Pasta",
                 quantity = 12,
                 measureUnit = "Kg",
-                expiryDate = Clock.System.now().minus(1.days)
+                expiryDate = Clock.System.now().minus(1.days),
+                categories = emptyList()
             ),
             modifier = Modifier.height(80.dp)
         )
@@ -138,11 +137,11 @@ fun ItemCardPreviewAboutToExpire() {
         ItemCard(
             item = Item(
                 id = 1,
-                category = Category(1, "Dispensa"),
                 name = "Pasta",
                 quantity = 12,
                 measureUnit = "Kg",
-                expiryDate = Clock.System.now().plus(1.days)
+                expiryDate = Clock.System.now().plus(1.days),
+                categories = emptyList()
             ),
             modifier = Modifier.height(80.dp)
         )
@@ -156,11 +155,11 @@ fun ItemCardPreview() {
         ItemCard(
             item = Item(
                 id = 1,
-                category = Category(1, "Dispensa"),
                 name = "Pasta",
                 quantity = 12,
                 measureUnit = "Kg",
-                expiryDate = Clock.System.now().plus(7.days)
+                expiryDate = Clock.System.now().plus(7.days),
+                categories = emptyList()
             ),
             modifier = Modifier.height(80.dp)
         )

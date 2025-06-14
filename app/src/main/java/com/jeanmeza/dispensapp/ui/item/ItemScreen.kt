@@ -307,6 +307,7 @@ fun ItemScreenPreview() {
         quantity = 1,
         measureUnit = "Kg",
         expiryDate = null,
+        categories = emptyList(),
     )
     DispensAppTheme(dynamicColor = false) {
         ItemScreen(

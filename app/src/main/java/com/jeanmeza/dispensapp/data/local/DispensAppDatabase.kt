@@ -6,15 +6,17 @@ import androidx.room.TypeConverters
 import com.jeanmeza.dispensapp.data.local.dao.CategoryDao
 import com.jeanmeza.dispensapp.data.local.dao.ItemDao
 import com.jeanmeza.dispensapp.data.local.entities.CategoryEntity
+import com.jeanmeza.dispensapp.data.local.entities.ItemCategoryCrossRef
 import com.jeanmeza.dispensapp.data.local.entities.ItemEntity
 import com.jeanmeza.dispensapp.data.local.util.InstantConverter
 
 @Database(
     entities = [
         ItemEntity::class,
-        CategoryEntity::class
+        CategoryEntity::class,
+        ItemCategoryCrossRef::class,
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(

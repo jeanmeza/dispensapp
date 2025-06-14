@@ -23,7 +23,7 @@ const val TAG = "ItemScreenViewModel"
 @HiltViewModel
 class ItemScreenViewModel @Inject constructor(
     private val itemRepository: ItemRepository,
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val itemRoute: ItemRoute = savedStateHandle.toRoute()
@@ -120,6 +120,8 @@ data class ItemScreenUiState(
                 name = "",
                 quantity = 1,
                 measureUnit = "",
+                expiryDate = null,
+                categories = emptyList(),
             )
             return ItemScreenUiState(
                 item = item,

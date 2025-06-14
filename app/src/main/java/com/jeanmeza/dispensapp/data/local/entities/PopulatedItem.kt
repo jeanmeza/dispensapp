@@ -1,6 +1,7 @@
 package com.jeanmeza.dispensapp.data.local.entities
 
 import androidx.room.Embedded
+import androidx.room.Junction
 import androidx.room.Relation
 import com.jeanmeza.dispensapp.data.model.Item
 
@@ -8,20 +9,24 @@ data class PopulatedItem(
     @Embedded
     val item: ItemEntity,
     @Relation(
-        parentColumn = "category_id",
+        parentColumn = "id",
         entityColumn = "id",
-        entity = CategoryEntity::class,
+        associateBy = Junction(
+            value = ItemCategoryCrossRef::class,
+            parentColumn = "item_id",
+            entityColumn = "category_id"
+        )
     )
-    val category: CategoryEntity?
+    val categories: List<CategoryEntity>,
 )
 
 fun PopulatedItem.asModel() = Item(
     id = item.id,
-    category = category?.asModel(),
     name = item.name,
     quantity = item.quantity,
     measureUnit = item.measureUnit,
     expiryDate = item.expiryDate,
+    categories = categories.map(CategoryEntity::asModel)
 )
 
 fun List<PopulatedItem>.asModel() = map(PopulatedItem::asModel)
