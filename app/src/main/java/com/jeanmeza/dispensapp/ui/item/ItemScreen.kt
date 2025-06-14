@@ -1,5 +1,8 @@
 package com.jeanmeza.dispensapp.ui.item
 
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,8 +17,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -35,6 +36,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -43,6 +46,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jeanmeza.dispensapp.R
+import com.jeanmeza.dispensapp.data.model.Category
 import com.jeanmeza.dispensapp.data.model.Item
 import com.jeanmeza.dispensapp.ui.formattedDate
 import com.jeanmeza.dispensapp.ui.theme.DispensAppIcons
@@ -105,6 +109,7 @@ fun ItemScreen(
 ) {
     var category by rememberSaveable { mutableStateOf("") }
     var showDatePickerDialog by rememberSaveable { mutableStateOf(false) }
+    var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
     var expiryDate = item.expiryDate?.let { formattedDate(item.expiryDate) } ?: ""
     val paddingMd = dimensionResource(R.dimen.p_md)
     val paddingSm = dimensionResource(R.dimen.p_sm)
@@ -151,10 +156,30 @@ fun ItemScreen(
                 ),
             )
             OutlinedTextField(
-                value = category,
+                value = categoriesString(item.categories),
                 onValueChange = { category = it },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .pointerInput(expiryDate) {
+                        awaitEachGesture {
+                            // Modifier.clickable doesn't work for text fields, so we use Modifier.pointerInput
+                            // in the Initial pass to observe events before the text field consumes them
+                            // in the Main pass.
+                            awaitFirstDown(pass = PointerEventPass.Initial)
+                            val upEvent =
+                                waitForUpOrCancellation(pass = PointerEventPass.Initial)
+                            if (upEvent != null) {
+                                // showCategoryDialog = true
+                            }
+                        }
+                    },
                 label = { Text(stringResource(R.string.category)) },
+                trailingIcon = {
+                    Icon(
+                        imageVector = DispensAppIcons.ArrowDropDown,
+                        contentDescription = null,
+                    )
+                },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Next,
@@ -178,7 +203,20 @@ fun ItemScreen(
                     onValueChange = { },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(2f),
+                        .weight(2f)
+                        .pointerInput(expiryDate) {
+                            awaitEachGesture {
+                                // Modifier.clickable doesn't work for text fields, so we use Modifier.pointerInput
+                                // in the Initial pass to observe events before the text field consumes them
+                                // in the Main pass.
+                                awaitFirstDown(pass = PointerEventPass.Initial)
+                                val upEvent =
+                                    waitForUpOrCancellation(pass = PointerEventPass.Initial)
+                                if (upEvent != null) {
+                                    showDatePickerDialog = true
+                                }
+                            }
+                        },
                     readOnly = true,
                     label = { Text(stringResource(R.string.expiry_date)) },
                     singleLine = true,
@@ -186,14 +224,10 @@ fun ItemScreen(
                         imeAction = ImeAction.Next,
                     ),
                     trailingIcon = {
-                        IconButton(
-                            onClick = { showDatePickerDialog = true },
-                        ) {
-                            Icon(
-                                imageVector = Icons.Rounded.DateRange,
-                                contentDescription = stringResource(R.string.expiry_date)
-                            )
-                        }
+                        Icon(
+                            imageVector = DispensAppIcons.DateRange,
+                            contentDescription = stringResource(R.string.expiry_date)
+                        )
                     },
                 )
                 OutlinedTextField(
@@ -218,6 +252,10 @@ fun ItemScreen(
             )
         }
     }
+}
+
+fun categoriesString(categories: List<Category>): String {
+    return categories.joinToString { it.name }
 }
 
 @Composable
