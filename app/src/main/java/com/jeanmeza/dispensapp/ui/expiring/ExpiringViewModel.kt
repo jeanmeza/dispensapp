@@ -2,7 +2,7 @@ package com.jeanmeza.dispensapp.ui.expiring
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jeanmeza.dispensapp.data.local.entities.asExternalModel
+import com.jeanmeza.dispensapp.data.local.entities.asModel
 import com.jeanmeza.dispensapp.data.model.Item
 import com.jeanmeza.dispensapp.data.repository.ItemRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +24,7 @@ class ExpiringViewModel @Inject constructor(
     private val date = getQueryTimestampForNext7Days()
 
     val expiringUiState: StateFlow<ExpiringUiState> =
-        itemRepository.getExpiringItemsStream(date).map { ExpiringUiState(it.asExternalModel()) }
+        itemRepository.getExpiringItemsStream(date).map { ExpiringUiState(it.asModel()) }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5.seconds.inWholeMilliseconds),

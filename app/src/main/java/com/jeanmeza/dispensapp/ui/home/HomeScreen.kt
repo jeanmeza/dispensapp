@@ -20,10 +20,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jeanmeza.dispensapp.R
+import com.jeanmeza.dispensapp.data.model.Category
 import com.jeanmeza.dispensapp.data.model.Item
 import com.jeanmeza.dispensapp.ui.component.ItemCard
 import com.jeanmeza.dispensapp.ui.theme.DispensAppTheme
-import java.time.LocalDate
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
+import kotlin.time.Duration.Companion.days
 
 @Composable
 fun HomeRoute(
@@ -72,30 +77,32 @@ private fun HomeScreen(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun HomeScreenPreview() {
+    val category = Category(1, "Dispensa")
     val items = listOf(
         Item(
             id = 1,
-            categoryId = null,
+            category = category,
             name = "Pasta",
             quantity = 10,
             measureUnit = "Kg",
-            expiryDate = LocalDate.now()
+            expiryDate = Clock.System.now()
         ),
         Item(
             id = 2,
-            categoryId = null,
-            name = "Tonno",
+            category = category,
+            name = "Latte",
             quantity = 10,
             measureUnit = "Kg",
-            expiryDate = LocalDate.now()
+            expiryDate = Clock.System.now()
         ),
         Item(
             id = 3,
-            categoryId = null,
-            name = "Riso",
-            quantity = 10,
+            category = category,
+            name = "Latte",
+            quantity = 1,
             measureUnit = "Kg",
-            expiryDate = null,
+            expiryDate = Clock.System.now()
+                .plus(4L, DateTimeUnit.DAY, TimeZone.currentSystemDefault())
         ),
     )
     DispensAppTheme(darkTheme = false, dynamicColor = false) {
@@ -110,30 +117,31 @@ fun HomeScreenPreview() {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun HomeScreenPreviewDark() {
+    val category = Category(1, "Dispensa")
     val items = listOf(
         Item(
             id = 1,
-            categoryId = null,
+            category = category,
             name = "Pasta",
             quantity = 10,
             measureUnit = "Kg",
-            expiryDate = LocalDate.now()
+            expiryDate = Clock.System.now()
         ),
         Item(
             id = 2,
-            categoryId = null,
+            category = category,
             name = "Latte",
             quantity = 10,
             measureUnit = "Kg",
-            expiryDate = LocalDate.now()
+            expiryDate = Clock.System.now()
         ),
         Item(
             id = 3,
-            categoryId = null,
+            category = category,
             name = "Latte",
             quantity = 1,
             measureUnit = "Kg",
-            expiryDate = LocalDate.now().plusDays(4),
+            expiryDate = Clock.System.now().plus(4.days)
         ),
     )
     DispensAppTheme(darkTheme = true, dynamicColor = false) {

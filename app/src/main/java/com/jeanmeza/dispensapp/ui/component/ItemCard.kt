@@ -24,11 +24,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jeanmeza.dispensapp.R
+import com.jeanmeza.dispensapp.data.model.Category
 import com.jeanmeza.dispensapp.data.model.Item
+import com.jeanmeza.dispensapp.ui.formattedDate
 import com.jeanmeza.dispensapp.ui.theme.DispensAppTheme
 import com.jeanmeza.dispensapp.ui.theme.Shapes
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlin.time.Duration.Companion.days
 
 @Composable
 fun ItemCard(item: Item, modifier: Modifier = Modifier) {
@@ -80,9 +83,10 @@ fun ItemCard(item: Item, modifier: Modifier = Modifier) {
                         )
                     }
                     if (item.expiryDate != null) {
+                        val formattedDate = formattedDate(item.expiryDate)
                         Box {
                             Text(
-                                text = "Expires ${formatDate(item.expiryDate)}",
+                                text = "Expires $formattedDate",
                                 style = MaterialTheme.typography.titleMedium,
                             )
                         }
@@ -94,23 +98,19 @@ fun ItemCard(item: Item, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun itemCardContainerColor(expiryDate: LocalDate?): Color {
+private fun itemCardContainerColor(expiryDate: Instant?): Color {
     if (expiryDate == null) {
         return Color(0xFFE4FFE0)
     }
-    var today = LocalDate.now()
-    var sevenDaysFromNow = today.plusDays(7)
-    if (expiryDate.isBefore(today)) {
+    var today = Clock.System.now()
+    var sevenDaysFromNow = today.plus(7.days)
+    if (expiryDate < today) {
         return Color(0xFFFDE9EB)
     }
-    if (expiryDate.isBefore(sevenDaysFromNow)) {
+    if (expiryDate < sevenDaysFromNow) {
         return Color(0xFFFFF2E5)
     }
     return Color(0xFFE4FFE0)
-}
-
-private fun formatDate(date: LocalDate): String {
-    return date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
 }
 
 @Preview
@@ -120,11 +120,11 @@ fun ItemCardPreviewExpired() {
         ItemCard(
             item = Item(
                 id = 1,
-                categoryId = null,
+                category = Category(1, "Dispensa"),
                 name = "Pasta",
                 quantity = 12,
                 measureUnit = "Kg",
-                expiryDate = LocalDate.now().minusDays(1)
+                expiryDate = Clock.System.now().minus(1.days)
             ),
             modifier = Modifier.height(80.dp)
         )
@@ -138,11 +138,11 @@ fun ItemCardPreviewAboutToExpire() {
         ItemCard(
             item = Item(
                 id = 1,
-                categoryId = null,
+                category = Category(1, "Dispensa"),
                 name = "Pasta",
                 quantity = 12,
                 measureUnit = "Kg",
-                expiryDate = LocalDate.now().plusDays(1)
+                expiryDate = Clock.System.now().plus(1.days)
             ),
             modifier = Modifier.height(80.dp)
         )
@@ -156,11 +156,11 @@ fun ItemCardPreview() {
         ItemCard(
             item = Item(
                 id = 1,
-                categoryId = null,
+                category = Category(1, "Dispensa"),
                 name = "Pasta",
                 quantity = 12,
                 measureUnit = "Kg",
-                expiryDate = LocalDate.now().plusWeeks(2)
+                expiryDate = Clock.System.now().plus(7.days)
             ),
             modifier = Modifier.height(80.dp)
         )

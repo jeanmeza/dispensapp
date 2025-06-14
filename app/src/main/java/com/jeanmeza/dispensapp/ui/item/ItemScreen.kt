@@ -44,18 +44,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jeanmeza.dispensapp.R
 import com.jeanmeza.dispensapp.data.model.Item
+import com.jeanmeza.dispensapp.ui.formattedDate
 import com.jeanmeza.dispensapp.ui.theme.DispensAppIcons
 import com.jeanmeza.dispensapp.ui.theme.DispensAppTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+import kotlinx.datetime.Instant
 
 @Composable
 fun ItemRoute(
     onBackClicked: () -> Unit,
-    afterDelete: () -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     viewModel: ItemScreenViewModel = hiltViewModel(),
 ) {
@@ -98,7 +96,7 @@ fun ItemScreen(
     measureUnitHasError: Boolean = false,
     quantityHasError: Boolean = false,
     onMeasureUnitChange: (String) -> Unit,
-    onExpiryDateChange: (Long?) -> Unit,
+    onExpiryDateChange: (Instant?) -> Unit,
     onQuantityChange: (String) -> Unit,
     onSaveClicked: () -> Boolean,
     onBackClicked: () -> Unit,
@@ -107,7 +105,7 @@ fun ItemScreen(
 ) {
     var category by rememberSaveable { mutableStateOf("") }
     var showDatePickerDialog by rememberSaveable { mutableStateOf(false) }
-    var expiryDate = formatDate(item.expiryDate)
+    var expiryDate = item.expiryDate?.let { formattedDate(item.expiryDate) } ?: ""
     val paddingMd = dimensionResource(R.dimen.p_md)
     val paddingSm = dimensionResource(R.dimen.p_sm)
     Scaffold(
@@ -272,18 +270,19 @@ fun ItemScreenTopBar(
 
 @Composable
 fun DatePickerModal(
-    initialDate: LocalDate?,
-    onDateSelected: (Long?) -> Unit,
+    initialDate: Instant?,
+    onDateSelected: (Instant?) -> Unit,
     onDismiss: () -> Unit,
 ) {
     val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = localDateToMillis(initialDate)
+        initialSelectedDateMillis = initialDate?.toEpochMilliseconds()
     )
     DatePickerDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = {
-                onDateSelected(datePickerState.selectedDateMillis)
+                val millis = datePickerState.selectedDateMillis
+                onDateSelected(millis?.let { Instant.fromEpochMilliseconds(it) })
                 onDismiss()
             }) {
                 Text("OK")
@@ -299,26 +298,11 @@ fun DatePickerModal(
     }
 }
 
-fun formatDate(date: LocalDate?): String {
-    return when (date) {
-        null -> ""
-        else -> DateTimeFormatter.ofPattern("dd/MM/uuuu").format(date)
-    }
-}
-
-fun localDateToMillis(localDate: LocalDate?): Long? {
-    return when (localDate) {
-        null -> null
-        else -> localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
-    }
-}
-
 @Preview(apiLevel = 35, showSystemUi = true, showBackground = true)
 @Composable
 fun ItemScreenPreview() {
     val item = Item(
         id = 0,
-        categoryId = 0,
         name = "Some name",
         quantity = 1,
         measureUnit = "Kg",

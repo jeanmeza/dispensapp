@@ -2,11 +2,25 @@ package com.jeanmeza.dispensapp.data.local.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.jeanmeza.dispensapp.data.model.Item
-import java.time.Instant
+import kotlinx.datetime.Instant
 
-@Entity(tableName = "item")
+@Entity(
+    tableName = "item",
+    indices = [
+        Index(value = ["category_id"]),
+    ],
+    foreignKeys = [
+        ForeignKey(
+            entity = CategoryEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["category_id"],
+            onDelete = ForeignKey.SET_NULL
+        )
+    ],
+)
 data class ItemEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
@@ -17,23 +31,6 @@ data class ItemEntity(
     @ColumnInfo(name = "measure_unit")
     val measureUnit: String,
     @ColumnInfo(name = "expiry_date")
-    val expiryDate: Long?
+    val expiryDate: Instant?
 )
 
-/**
- * Converts the local model to the external model for use by layers external to the data layer
- */
-fun ItemEntity.asExternalModel() = Item(
-    id = id,
-    categoryId = categoryId,
-    name = name,
-    quantity = quantity,
-    measureUnit = measureUnit,
-    expiryDate = expiryDate?.let {
-        Instant.ofEpochMilli(it)
-            .atZone(java.time.ZoneId.systemDefault())
-            .toLocalDate()
-    },
-)
-
-fun List<ItemEntity>.asExternalModel() = map(ItemEntity::asExternalModel)

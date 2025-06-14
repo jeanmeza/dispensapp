@@ -2,7 +2,7 @@ package com.jeanmeza.dispensapp.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jeanmeza.dispensapp.data.local.entities.asExternalModel
+import com.jeanmeza.dispensapp.data.local.entities.asModel
 import com.jeanmeza.dispensapp.data.model.Item
 import com.jeanmeza.dispensapp.data.repository.ItemRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,10 +15,10 @@ import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val itemRepository: ItemRepository,
+    itemRepository: ItemRepository,
 ) : ViewModel() {
     val homeUiState: StateFlow<HomeUiState> =
-        itemRepository.getAllItemsStream().map { HomeUiState(it.asExternalModel()) }
+        itemRepository.getAllItemsStream().map { HomeUiState(it.asModel()) }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5.seconds.inWholeMilliseconds),

@@ -11,9 +11,9 @@ data class CategoryEntity(
     val name: String,
 )
 
-fun CategoryEntity.asExternalModel() = Category(
+fun CategoryEntity.asModel() = Category(
     id = id,
     name = name,
 )
 
-fun List<CategoryEntity>.asExternalModel() = map(CategoryEntity::asExternalModel)
+fun List<CategoryEntity>.asModel() = map(CategoryEntity::asModel)

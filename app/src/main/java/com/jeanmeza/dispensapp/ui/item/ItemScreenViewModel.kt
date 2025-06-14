@@ -5,7 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.jeanmeza.dispensapp.data.local.entities.asExternalModel
+import com.jeanmeza.dispensapp.data.local.entities.asModel
 import com.jeanmeza.dispensapp.data.model.Item
 import com.jeanmeza.dispensapp.data.model.asEntity
 import com.jeanmeza.dispensapp.data.repository.ItemRepository
@@ -15,8 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.Instant
-import java.time.ZoneId
+import kotlinx.datetime.Instant
 import javax.inject.Inject
 
 const val TAG = "ItemScreenViewModel"
@@ -45,7 +44,7 @@ class ItemScreenViewModel @Inject constructor(
         viewModelScope.launch {
             val item = itemRepository.getItem(itemId)
             _itemUiState.update {
-                ItemScreenUiState(item.asExternalModel())
+                ItemScreenUiState(item.asModel())
             }
         }
     }
@@ -62,14 +61,9 @@ class ItemScreenViewModel @Inject constructor(
         }
     }
 
-    fun onExpiryDateChange(millis: Long?) {
+    fun onExpiryDateChange(instant: Instant?) {
         _itemUiState.update {
-            if (millis == null) {
-                return@update it.copy(item = it.item.copy(expiryDate = null))
-            }
-            val localDate =
-                Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()).toLocalDate()
-            it.copy(item = it.item.copy(expiryDate = localDate))
+            it.copy(item = it.item.copy(expiryDate = instant))
         }
     }
 
@@ -123,11 +117,9 @@ data class ItemScreenUiState(
         fun new(): ItemScreenUiState {
             val item = Item(
                 id = 0,
-                categoryId = null,
                 name = "",
                 quantity = 1,
                 measureUnit = "",
-                expiryDate = null,
             )
             return ItemScreenUiState(
                 item = item,

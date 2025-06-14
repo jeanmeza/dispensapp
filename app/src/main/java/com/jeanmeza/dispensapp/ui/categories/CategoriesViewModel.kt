@@ -2,7 +2,7 @@ package com.jeanmeza.dispensapp.ui.categories
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jeanmeza.dispensapp.data.local.entities.asExternalModel
+import com.jeanmeza.dispensapp.data.local.entities.asModel
 import com.jeanmeza.dispensapp.data.model.Category
 import com.jeanmeza.dispensapp.data.repository.CategoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +18,7 @@ class CategoriesViewModel @Inject constructor(
     categoryRepository: CategoryRepository
 ) : ViewModel() {
     val categoriesUiState: StateFlow<CategoriesUiState> =
-        categoryRepository.getCategoriesStream().map { CategoriesUiState(it.asExternalModel()) }
+        categoryRepository.getCategoriesStream().map { CategoriesUiState(it.asModel()) }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5.seconds.inWholeMilliseconds),

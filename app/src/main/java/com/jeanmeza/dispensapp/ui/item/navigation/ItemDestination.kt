@@ -19,13 +19,11 @@ fun NavController.navigateToItem(
 
 fun NavGraphBuilder.itemScreen(
     onBackClicked: () -> Unit,
-    afterDelete: () -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
 ) {
     composable<ItemRoute> {
         ItemRoute(
             onBackClicked = onBackClicked,
-            afterDelete = afterDelete,
             onShowSnackbar = onShowSnackbar,
         )
     }

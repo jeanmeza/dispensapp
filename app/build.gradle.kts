@@ -69,6 +69,8 @@ dependencies {
     implementation(libs.androidx.material3.adaptive.navigation)
     // Material Icons Extended
     implementation(libs.androidx.compose.material.icons.extended)
+    // Kotlinx datetime
+    implementation(libs.kotlinx.datetime)
 
     testImplementation(libs.junit)
 

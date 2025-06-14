@@ -33,7 +33,6 @@ fun DispensAppNavHost(
         shoppingListScreen()
         itemScreen(
             onBackClicked = navController::popBackStack,
-            afterDelete = navController::popBackStack,
             onShowSnackbar = appState::onShowSnackbar,
         )
     }
