@@ -1,6 +1,7 @@
 package com.jeanmeza.dispensapp.ui.theme
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Label
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Home
@@ -34,6 +35,7 @@ object DispensAppIcons {
     val ExpiringOutlined = Icons.Outlined.Timer
     val Home = Icons.Filled.Home
     val HomeOutlined = Icons.Outlined.Home
+    val LabelOutlined = Icons.AutoMirrored.Outlined.Label
     val Search = Icons.Rounded.Search
     val Settings = Icons.Rounded.Settings
     val StorefrontOutlined = Icons.Outlined.Storefront

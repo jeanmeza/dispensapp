@@ -72,7 +72,10 @@ fun CategoryDialog(
         modifier = Modifier.widthIn(max = configuration.screenWidthDp.dp - 80.dp),
         onDismissRequest = { onDismiss() },
         title = {
-            Text(text = "Category", style = MaterialTheme.typography.titleLarge)
+            Text(
+                text = stringResource(R.string.create_category),
+                style = MaterialTheme.typography.titleLarge,
+            )
         },
         text = {
             OutlinedTextField(
@@ -120,7 +123,7 @@ fun CategoryDialog(
 }
 
 
-@Preview(apiLevel = 35, showBackground = true, showSystemUi = true)
+@Preview(apiLevel = 35, showBackground = true)
 @Composable
 fun CategoryDialogPreview() {
     DispensAppTheme {

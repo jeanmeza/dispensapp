@@ -15,4 +15,7 @@
     <string name="measure_unit">Measure unit</string>
     <string name="expiry_date">Expiry date</string>
     <string name="shop">Shop</string>
+    <string name="select_categories">Select categories</string>
+    <string name="new_category">New category</string>
+    <string name="create_category">Create category</string>
 </resources>

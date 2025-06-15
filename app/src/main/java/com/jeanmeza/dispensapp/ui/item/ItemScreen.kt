@@ -48,6 +48,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jeanmeza.dispensapp.R
 import com.jeanmeza.dispensapp.data.model.Category
 import com.jeanmeza.dispensapp.data.model.Item
+import com.jeanmeza.dispensapp.ui.categoryselection.CategorySelectionDialog
 import com.jeanmeza.dispensapp.ui.formattedDate
 import com.jeanmeza.dispensapp.ui.theme.DispensAppIcons
 import com.jeanmeza.dispensapp.ui.theme.DispensAppTheme
@@ -113,6 +114,16 @@ fun ItemScreen(
     var expiryDate = item.expiryDate?.let { formattedDate(item.expiryDate) } ?: ""
     val paddingMd = dimensionResource(R.dimen.p_md)
     val paddingSm = dimensionResource(R.dimen.p_sm)
+
+    if (showCategoryDialog) {
+        CategorySelectionDialog(
+            onDismiss = { showCategoryDialog = false },
+            onCategorySelection = {},
+            onSave = { },
+            onCreateCategory = {},
+        )
+    }
+
     Scaffold(
         modifier = modifier
             .fillMaxSize()
@@ -169,7 +180,7 @@ fun ItemScreen(
                             val upEvent =
                                 waitForUpOrCancellation(pass = PointerEventPass.Initial)
                             if (upEvent != null) {
-                                // showCategoryDialog = true
+                                showCategoryDialog = true
                             }
                         }
                     },
