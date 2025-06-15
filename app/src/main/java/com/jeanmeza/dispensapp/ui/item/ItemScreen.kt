@@ -76,7 +76,7 @@ fun ItemRoute(
         onMeasureUnitChange = viewModel::onMeasureUnitChange,
         onExpiryDateChange = viewModel::onExpiryDateChange,
         onQuantityChange = viewModel::onQuantityChange,
-        onCategoryChange = viewModel::onCategoryChange,
+        onCategoriesChange = viewModel::onCategoriesChange,
         onSaveClicked = viewModel::onSaveClicked,
         onDeleteClicked = {
             coroutineScope.launch {
@@ -104,7 +104,7 @@ fun ItemScreen(
     onMeasureUnitChange: (String) -> Unit,
     onExpiryDateChange: (Instant?) -> Unit,
     onQuantityChange: (String) -> Unit,
-    onCategoryChange: (Category) -> Unit,
+    onCategoriesChange: (List<Category>) -> Unit,
     onSaveClicked: () -> Boolean,
     onBackClicked: () -> Unit,
     onDeleteClicked: () -> Unit,
@@ -120,9 +120,8 @@ fun ItemScreen(
     if (showCategoryDialog) {
         CategorySelectionDialog(
             onDismiss = { showCategoryDialog = false },
-            currentCategories = item.categories,
-            onCategoryChange = onCategoryChange,
-            onSave = { },
+            initialCategories = item.categories,
+            onSave = onCategoriesChange,
         )
     }
 
@@ -370,7 +369,7 @@ fun ItemScreenPreview() {
             onMeasureUnitChange = {},
             onExpiryDateChange = {},
             onQuantityChange = {},
-            onCategoryChange = {},
+            onCategoriesChange = {},
             onSaveClicked = { false },
             onDeleteClicked = {},
             onBackClicked = {},

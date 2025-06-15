@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -18,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -45,11 +47,13 @@ import com.jeanmeza.dispensapp.ui.theme.Shapes
 @Composable
 fun CategorySelectionDialog(
     onDismiss: () -> Unit,
-    currentCategories: List<Category>,
-    onCategoryChange: (Category) -> Unit,
-    onSave: () -> Unit,
+    initialCategories: List<Category>,
+    onSave: (List<Category>) -> Unit,
     viewModel: CategorySelectionViewModel = hiltViewModel()
 ) {
+    LaunchedEffect(Unit) {
+        viewModel.setInitialSelectedCategories(initialCategories)
+    }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -59,11 +63,11 @@ fun CategorySelectionDialog(
 
     CategorySelectionDialog(
         onDismiss = onDismiss,
-        onCategorySelection = onCategoryChange,
-        onSave = onSave,
+        onCategorySelection = viewModel::toggleCategorySelection,
+        onSave = { onSave(viewModel.getCurrentSelectedCategories()) },
         onCreateCategory = { showCategoryDialog = true },
         categories = uiState.categories,
-        selectedCategories = currentCategories
+        selectedCategories = uiState.selectedCategories,
     )
 }
 
@@ -98,6 +102,7 @@ private fun CategorySelectionDialog(
         text = {
             LazyColumn {
                 items(items = categories, key = { it.id }) { category ->
+                    val isChecked = selectedCategories.contains(category)
                     Card(
                         onClick = { onCategorySelection(category) },
                         modifier = Modifier.fillMaxWidth(),
@@ -108,7 +113,7 @@ private fun CategorySelectionDialog(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(
-                                    vertical = dimensionResource(R.dimen.p_sm),
+                                    vertical = dimensionResource(R.dimen.p_xs),
                                 ),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
@@ -117,12 +122,14 @@ private fun CategorySelectionDialog(
                                 imageVector = DispensAppIcons.LabelOutlined,
                                 contentDescription = null,
                             )
-                            Spacer(modifier = Modifier.widthIn(dimensionResource(R.dimen.p_sm)))
-                            Text(text = category.name)
-                            Spacer(modifier = Modifier.weight(1f))
+                            Spacer(modifier = Modifier.width(dimensionResource(R.dimen.p_sm)))
+                            Text(
+                                text = category.name,
+                                modifier = Modifier.weight(1f),
+                            )
                             Checkbox(
-                                checked = isCategorySelected(category, selectedCategories),
-                                onCheckedChange = null
+                                checked = isChecked,
+                                onCheckedChange = { _ -> onCategorySelection(category) }
                             )
                         }
                     }
@@ -139,16 +146,16 @@ private fun CategorySelectionDialog(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(
-                                    vertical = dimensionResource(R.dimen.p_sm),
+                                    vertical = dimensionResource(R.dimen.p_xs),
                                 ),
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Icon(
                                 imageVector = DispensAppIcons.Add,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
                             )
-                            Spacer(modifier = Modifier.widthIn(dimensionResource(R.dimen.p_sm)))
+                            Spacer(modifier = Modifier.width(dimensionResource(R.dimen.p_sm)))
                             Text(
                                 text = stringResource(R.string.new_category),
                                 color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -170,7 +177,10 @@ private fun CategorySelectionDialog(
                 Text(stringResource(R.string.cancel))
             }
             TextButton(
-                onClick = onSave,
+                onClick = {
+                    onSave()
+                    onDismiss()
+                },
                 modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.p_sm)),
                 colors = ButtonDefaults.textButtonColors(
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -180,11 +190,6 @@ private fun CategorySelectionDialog(
             }
         }
     )
-}
-
-@Composable
-fun isCategorySelected(category: Category, categories: List<Category>): Boolean {
-    return categories.contains(category)
 }
 
 @Preview(apiLevel = 35, showBackground = true)

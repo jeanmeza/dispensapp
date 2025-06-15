@@ -75,13 +75,7 @@ class ItemScreenViewModel @Inject constructor(
         }
     }
 
-    fun onCategoryChange(category: Category) {
-        val categories = _itemUiState.value.item.categories.toMutableList()
-        if (categories.contains(category)) {
-            categories.remove(category)
-        } else {
-            categories.add(category)
-        }
+    fun onCategoriesChange(categories: List<Category>) {
         _itemUiState.update {
             it.copy(item = it.item.copy(categories = categories))
         }
