@@ -16,7 +16,7 @@ import com.jeanmeza.dispensapp.data.local.util.InstantConverter
         CategoryEntity::class,
         ItemCategoryCrossRef::class,
     ],
-    version = 2,
+    version = 1,
     exportSchema = false
 )
 @TypeConverters(

@@ -12,6 +12,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -35,13 +36,17 @@ fun CategoryDialog(
     onDismiss: () -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     viewModel: CategoryDialogViewModel = hiltViewModel(),
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
 ) {
+    LaunchedEffect(Unit) {
+        viewModel.resetUiState()
+    }
     val uiState by viewModel.categoryDialogUiState.collectAsStateWithLifecycle()
+    val coroutineScope = rememberCoroutineScope()
     CategoryDialog(
         category = uiState.category,
         onDismiss = onDismiss,
         nameHasError = uiState.nameHasError,
+        nameErrorMessage = uiState.nameErrorMessage,
         onNameChange = viewModel::onNameChange,
         onSaveClick = viewModel::onSaveClick,
         coroutineScope = coroutineScope,
@@ -50,10 +55,11 @@ fun CategoryDialog(
 }
 
 @Composable
-fun CategoryDialog(
+private fun CategoryDialog(
     category: Category,
     onDismiss: () -> Unit,
     nameHasError: Boolean,
+    nameErrorMessage: String,
     onNameChange: (String) -> Unit,
     onSaveClick: suspend () -> Boolean,
     coroutineScope: CoroutineScope,
@@ -83,6 +89,7 @@ fun CategoryDialog(
                 onValueChange = onNameChange,
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(stringResource(R.string.name)) },
+                supportingText = { Text(nameErrorMessage) },
                 isError = nameHasError,
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
@@ -111,6 +118,7 @@ fun CategoryDialog(
                         }
                     },
                     modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.p_sm)),
+                    enabled = category.name.isBlank().not(),
                     colors = ButtonDefaults.textButtonColors(
                         contentColor = MaterialTheme.colorScheme.onBackground,
                     )
@@ -131,6 +139,7 @@ fun CategoryDialogPreview() {
             onDismiss = {},
             category = Category(id = 0, name = "Some name"),
             nameHasError = false,
+            nameErrorMessage = "",
             onNameChange = {},
             onSaveClick = { true },
             coroutineScope = rememberCoroutineScope(),
