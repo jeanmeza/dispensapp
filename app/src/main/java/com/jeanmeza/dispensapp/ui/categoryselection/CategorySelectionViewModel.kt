@@ -15,13 +15,12 @@ import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class CategorySelectionViewModel @Inject constructor(
-    private val categoryRepository: CategoryRepository,
+    categoryRepository: CategoryRepository,
 ) : ViewModel() {
     val uiState: StateFlow<CategorySelectionUiState> =
         categoryRepository.getCategoriesStream().map {
             CategorySelectionUiState(
                 categories = it.asModel(),
-                selectedCategories = emptyList()
             )
         }
             .stateIn(
@@ -34,12 +33,10 @@ class CategorySelectionViewModel @Inject constructor(
 
 data class CategorySelectionUiState(
     val categories: List<Category>,
-    val selectedCategories: List<Category>,
 ) {
     companion object {
         fun new() = CategorySelectionUiState(
             categories = emptyList(),
-            selectedCategories = emptyList(),
         )
     }
 }

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.jeanmeza.dispensapp.data.local.entities.asModel
+import com.jeanmeza.dispensapp.data.model.Category
 import com.jeanmeza.dispensapp.data.model.Item
 import com.jeanmeza.dispensapp.data.model.asEntity
 import com.jeanmeza.dispensapp.data.repository.ItemRepository
@@ -71,6 +72,18 @@ class ItemScreenViewModel @Inject constructor(
         val digits = quantity.filter { it.isDigit() }
         _itemUiState.update {
             it.copy(quantityInput = digits)
+        }
+    }
+
+    fun onCategoryChange(category: Category) {
+        val categories = _itemUiState.value.item.categories.toMutableList()
+        if (categories.contains(category)) {
+            categories.remove(category)
+        } else {
+            categories.add(category)
+        }
+        _itemUiState.update {
+            it.copy(item = it.item.copy(categories = categories))
         }
     }
 

@@ -19,6 +19,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,26 +36,34 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jeanmeza.dispensapp.R
 import com.jeanmeza.dispensapp.data.model.Category
+import com.jeanmeza.dispensapp.ui.categories.CategoryDialog
 import com.jeanmeza.dispensapp.ui.previewprovider.CategorySelectionPreviewParameterProvider
 import com.jeanmeza.dispensapp.ui.theme.DispensAppIcons
 import com.jeanmeza.dispensapp.ui.theme.DispensAppTheme
+import com.jeanmeza.dispensapp.ui.theme.Shapes
 
 @Composable
 fun CategorySelectionDialog(
     onDismiss: () -> Unit,
-    onCategorySelection: (Category) -> Unit,
+    currentCategories: List<Category>,
+    onCategoryChange: (Category) -> Unit,
     onSave: () -> Unit,
-    onCreateCategory: () -> Unit,
     viewModel: CategorySelectionViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
+
+    if (showCategoryDialog) {
+        CategoryDialog(onDismiss = { showCategoryDialog = false })
+    }
+
     CategorySelectionDialog(
         onDismiss = onDismiss,
-        onCategorySelection = onCategorySelection,
+        onCategorySelection = onCategoryChange,
         onSave = onSave,
-        onCreateCategory = onCreateCategory,
+        onCreateCategory = { showCategoryDialog = true },
         categories = uiState.categories,
-        selectedCategories = uiState.selectedCategories
+        selectedCategories = currentCategories
     )
 }
 
@@ -85,35 +96,13 @@ private fun CategorySelectionDialog(
         },
 
         text = {
-            // TODO: use a lazy column with the categories. Each item will have a checkbox for selection
             LazyColumn {
-                item {
-                    Card(
-                        onClick = onCreateCategory,
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors().copy(containerColor = Color.Transparent),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = DispensAppIcons.Add,
-                                contentDescription = null,
-                            )
-                            Spacer(modifier = Modifier.widthIn(dimensionResource(R.dimen.p_sm)))
-                            Text(text = stringResource(R.string.new_category))
-                        }
-                    }
-                }
-
                 items(items = categories, key = { it.id }) { category ->
                     Card(
                         onClick = { onCategorySelection(category) },
                         modifier = Modifier.fillMaxWidth(),
+                        shape = Shapes.extraSmall,
                         colors = CardDefaults.cardColors().copy(containerColor = Color.Transparent),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                     ) {
                         Row(
                             modifier = Modifier
@@ -132,8 +121,37 @@ private fun CategorySelectionDialog(
                             Text(text = category.name)
                             Spacer(modifier = Modifier.weight(1f))
                             Checkbox(
-                                checked = true,
+                                checked = isCategorySelected(category, selectedCategories),
                                 onCheckedChange = null
+                            )
+                        }
+                    }
+                }
+
+                item {
+                    Card(
+                        onClick = onCreateCategory,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = Shapes.extraSmall,
+                        colors = CardDefaults.cardColors().copy(containerColor = Color.Transparent),
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    vertical = dimensionResource(R.dimen.p_sm),
+                                ),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = DispensAppIcons.Add,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                            )
+                            Spacer(modifier = Modifier.widthIn(dimensionResource(R.dimen.p_sm)))
+                            Text(
+                                text = stringResource(R.string.new_category),
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
                             )
                         }
                     }
@@ -142,28 +160,31 @@ private fun CategorySelectionDialog(
         },
 
         confirmButton = {
-            Row {
-                TextButton(
-                    onClick = onDismiss,
-                    modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.p_sm)),
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colorScheme.onBackground,
-                    )
-                ) {
-                    Text(stringResource(R.string.cancel))
-                }
-                TextButton(
-                    onClick = onSave,
-                    modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.p_sm)),
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colorScheme.onBackground,
-                    )
-                ) {
-                    Text(stringResource(R.string.save))
-                }
+            TextButton(
+                onClick = onDismiss,
+                modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.p_sm)),
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                )
+            ) {
+                Text(stringResource(R.string.cancel))
+            }
+            TextButton(
+                onClick = onSave,
+                modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.p_sm)),
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                )
+            ) {
+                Text(stringResource(R.string.save))
             }
         }
     )
+}
+
+@Composable
+fun isCategorySelected(category: Category, categories: List<Category>): Boolean {
+    return categories.contains(category)
 }
 
 @Preview(apiLevel = 35, showBackground = true)

@@ -56,7 +56,6 @@ fun DispensApp(
     if (showCategoryDialog) {
         CategoryDialog(
             onDismiss = { showCategoryDialog = false },
-            onShowSnackbar = appState::onShowSnackbar
         )
     }
 

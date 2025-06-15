@@ -34,7 +34,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun CategoryDialog(
     onDismiss: () -> Unit,
-    onShowSnackbar: suspend (String, String?) -> Boolean,
     viewModel: CategoryDialogViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(Unit) {
@@ -50,7 +49,6 @@ fun CategoryDialog(
         onNameChange = viewModel::onNameChange,
         onSaveClick = viewModel::onSaveClick,
         coroutineScope = coroutineScope,
-        onShowSnackbar = onShowSnackbar,
     )
 }
 
@@ -63,7 +61,6 @@ private fun CategoryDialog(
     onNameChange: (String) -> Unit,
     onSaveClick: suspend () -> Boolean,
     coroutineScope: CoroutineScope,
-    onShowSnackbar: suspend (String, String?) -> Boolean,
 ) {
     val configuration = LocalConfiguration.current
     /**
@@ -113,7 +110,6 @@ private fun CategoryDialog(
                         coroutineScope.launch {
                             if (onSaveClick()) {
                                 onDismiss()
-                                onShowSnackbar("Category saved", null)
                             }
                         }
                     },
@@ -143,7 +139,6 @@ fun CategoryDialogPreview() {
             onNameChange = {},
             onSaveClick = { true },
             coroutineScope = rememberCoroutineScope(),
-            onShowSnackbar = { _, _ -> true },
         )
     }
 }
