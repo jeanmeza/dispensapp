@@ -105,7 +105,7 @@ fun ItemScreen(
     onExpiryDateChange: (Instant?) -> Unit,
     onQuantityChange: (String) -> Unit,
     onCategoriesChange: (List<Category>) -> Unit,
-    onSaveClicked: () -> Boolean,
+    onSaveClicked: suspend () -> Boolean,
     onBackClicked: () -> Unit,
     onDeleteClicked: () -> Unit,
     coroutineScope: CoroutineScope,
@@ -274,7 +274,7 @@ fun categoriesString(categories: List<Category>): String {
 fun ItemScreenTopBar(
     isEditing: Boolean,
     onBackClicked: () -> Unit,
-    onSaveClicked: () -> Boolean,
+    onSaveClicked: suspend () -> Boolean,
     onDeleteClicked: () -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     modifier: Modifier = Modifier,

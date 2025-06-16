@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.jeanmeza.dispensapp.data.local.entities.asModel
+import com.jeanmeza.dispensapp.data.local.entities.categoriesCrossRef
 import com.jeanmeza.dispensapp.data.model.Category
 import com.jeanmeza.dispensapp.data.model.Item
 import com.jeanmeza.dispensapp.data.model.asEntity
@@ -81,7 +82,7 @@ class ItemScreenViewModel @Inject constructor(
         }
     }
 
-    fun onSaveClicked(): Boolean {
+    suspend fun onSaveClicked(): Boolean {
         val currentItem = _itemUiState.value.item
         val quantity = _itemUiState.value.quantityInput.toIntOrNull()
         _itemUiState.update {
@@ -98,10 +99,13 @@ class ItemScreenViewModel @Inject constructor(
             return false
         }
         val itemToSave = currentItem.copy(quantity = quantity!!)
-        viewModelScope.launch {
-            Log.d(TAG, "onSaveClicked: $itemToSave")
-            itemRepository.upsert(itemToSave.asEntity())
-        }
+
+        Log.d(TAG, "onSaveClicked: $itemToSave")
+        itemRepository.upsert(itemToSave.asEntity())
+
+        itemToSave.categoriesCrossRef().flatten()
+        // TODO: save itemcategoriescrossref
+
         return true
     }
 
