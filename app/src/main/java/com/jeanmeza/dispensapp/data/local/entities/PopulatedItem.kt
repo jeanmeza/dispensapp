@@ -32,10 +32,8 @@ fun PopulatedItem.asModel() = Item(
 fun List<PopulatedItem>.asModel() = map(PopulatedItem::asModel)
 
 fun Item.categoriesCrossRef() = categories.map {
-    categories.map { category ->
-        ItemCategoryCrossRef(
-            itemId = id,
-            categoryId = category.id,
-        )
-    }
+    ItemCategoryCrossRef(
+        itemId = this.id,
+        categoryId = it.id,
+    )
 }

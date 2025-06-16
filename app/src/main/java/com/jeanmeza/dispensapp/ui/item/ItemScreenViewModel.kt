@@ -98,15 +98,27 @@ class ItemScreenViewModel @Inject constructor(
         ) {
             return false
         }
-        val itemToSave = currentItem.copy(quantity = quantity!!)
 
-        Log.d(TAG, "onSaveClicked: $itemToSave")
-        itemRepository.upsert(itemToSave.asEntity())
+        var itemToSave = currentItem.copy(quantity = quantity!!)
 
-        itemToSave.categoriesCrossRef().flatten()
-        // TODO: save itemcategoriescrossref
+        try {
+            Log.d(TAG, "onSaveClicked: $itemToSave")
 
-        return true
+            val newId =itemRepository.upsert(itemToSave.asEntity()).toInt()
+            val itemId = if (newId > 0) newId else itemToSave.id
+            itemToSave = itemToSave.copy(id = itemId)
+
+            var categoryCrossRefs = itemToSave.categoriesCrossRef()
+            var categoryIds = categoryCrossRefs.map { it.categoryId }
+
+            itemRepository.deleteCategoriesCrossRef(itemId, categoryIds)
+            itemRepository.insertItemCategoryCrossRef(categoryCrossRefs)
+
+            return true
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to save item $itemToSave", e)
+            return false
+        }
     }
 
     fun onDeleteClicked() {

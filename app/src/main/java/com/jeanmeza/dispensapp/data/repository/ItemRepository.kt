@@ -1,5 +1,6 @@
 package com.jeanmeza.dispensapp.data.repository
 
+import com.jeanmeza.dispensapp.data.local.entities.ItemCategoryCrossRef
 import com.jeanmeza.dispensapp.data.local.entities.ItemEntity
 import com.jeanmeza.dispensapp.data.local.entities.PopulatedItem
 import kotlinx.coroutines.flow.Flow
@@ -23,11 +24,21 @@ interface ItemRepository {
     /**
      * Insert or update an item in the data source
      */
-    suspend fun upsert(item: ItemEntity)
+    suspend fun upsert(item: ItemEntity): Long
 
     /**
      * Delete item from the data source
      */
     suspend fun delete(item: ItemEntity)
+
+    /**
+     * Delete item-category association
+     */
+    suspend fun deleteCategoriesCrossRef(itemId: Int, categoryIds: List<Int>)
+
+    /**
+     * Insert the new item-category associations
+     */
+    suspend fun insertItemCategoryCrossRef(itemCategories: List<ItemCategoryCrossRef>)
 
 }
