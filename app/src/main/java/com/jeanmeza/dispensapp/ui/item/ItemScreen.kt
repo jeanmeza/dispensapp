@@ -38,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -110,16 +111,16 @@ fun ItemScreen(
     onDeleteClicked: () -> Unit,
     coroutineScope: CoroutineScope,
 ) {
-    var category by rememberSaveable { mutableStateOf("") }
     var showDatePickerDialog by rememberSaveable { mutableStateOf(false) }
-    var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
+    var showCategorySelectionDialog by rememberSaveable { mutableStateOf(false) }
     var expiryDate = item.expiryDate?.let { formattedDate(item.expiryDate) } ?: ""
     val paddingMd = dimensionResource(R.dimen.p_md)
     val paddingSm = dimensionResource(R.dimen.p_sm)
+    val keyboardController = LocalSoftwareKeyboardController.current
 
-    if (showCategoryDialog) {
+    if (showCategorySelectionDialog) {
         CategorySelectionDialog(
-            onDismiss = { showCategoryDialog = false },
+            onDismiss = { showCategorySelectionDialog = false },
             initialCategories = item.categories,
             onSave = onCategoriesChange,
         )
@@ -169,7 +170,7 @@ fun ItemScreen(
             )
             OutlinedTextField(
                 value = categoriesString(item.categories),
-                onValueChange = { category = it },
+                onValueChange = {},
                 modifier = Modifier
                     .fillMaxWidth()
                     .pointerInput(expiryDate) {
@@ -181,21 +182,24 @@ fun ItemScreen(
                             val upEvent =
                                 waitForUpOrCancellation(pass = PointerEventPass.Initial)
                             if (upEvent != null) {
-                                showCategoryDialog = true
+                                keyboardController?.hide()
+                                showCategorySelectionDialog = true
                             }
                         }
                     },
+                readOnly = true,
                 label = { Text(stringResource(R.string.category)) },
                 trailingIcon = {
+                    val imageVector = if (showCategorySelectionDialog)
+                        DispensAppIcons.ArrowDropUp
+                    else
+                        DispensAppIcons.ArrowDropDown
+
                     Icon(
-                        imageVector = DispensAppIcons.ArrowDropDown,
+                        imageVector = imageVector,
                         contentDescription = null,
                     )
                 },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Next,
-                ),
             )
             OutlinedTextField(
                 value = item.measureUnit,
@@ -232,9 +236,6 @@ fun ItemScreen(
                     readOnly = true,
                     label = { Text(stringResource(R.string.expiry_date)) },
                     singleLine = true,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Next,
-                    ),
                     trailingIcon = {
                         Icon(
                             imageVector = DispensAppIcons.DateRange,
