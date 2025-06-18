@@ -42,7 +42,6 @@ fun ItemCard(item: Item, modifier: Modifier = Modifier) {
                 containerColor = itemCardContainerColor(item.expiryDate),
                 contentColor = Color(0xFF1B1C19)  // It's the same as onSurfaceLight
             ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.p_sm)),
