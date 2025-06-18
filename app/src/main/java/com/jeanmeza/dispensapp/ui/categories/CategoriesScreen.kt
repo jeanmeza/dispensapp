@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,22 +35,20 @@ fun CategoriesRoute(
         modifier = modifier,
         categories = uiState.categories,
         isSelectingCategories = uiState.isSelectingCategories,
-        selectedCategories = uiState.selectedCategories,
         toggleCategorySelection = viewModel::toggleCategorySelection,
-        setIsSelectingCategories = viewModel::setIsSelectingCategories,
         activateSelection = viewModel::activateSelection,
+        isSelected = viewModel::isCategorySelected,
     )
 }
 
 @Composable
 private fun CategoriesScreen(
-    modifier: Modifier = Modifier,
     categories: List<Category>,
     isSelectingCategories: Boolean,
-    selectedCategories: Set<Category>,
     toggleCategorySelection: (Category) -> Unit,
-    setIsSelectingCategories: (Boolean) -> Unit,
     activateSelection: (Category) -> Unit,
+    modifier: Modifier = Modifier,
+    isSelected: (Category) -> Boolean,
 ) {
     Column(
         modifier = modifier
@@ -64,19 +61,6 @@ private fun CategoriesScreen(
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.p_md)),
         ) {
             items(items = categories, key = { it.id }) { category ->
-                val cardColors = if (selectedCategories.contains(category))
-                    CardDefaults.cardColors()
-                        .copy(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        )
-                else
-                    CardDefaults.cardColors()
-                        .copy(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                            contentColor = MaterialTheme.colorScheme.onSurface,
-                        )
-
                 CategoryCard(
                     category = category,
                     modifier = Modifier
@@ -95,7 +79,7 @@ private fun CategoriesScreen(
                                 }
                             }
                         ),
-                    colors = cardColors,
+                    selected = isSelected(category),
                 )
             }
         }
@@ -113,10 +97,9 @@ fun CategoriesScreenPreview(
             modifier = Modifier.statusBarsPadding(),
             categories = categories,
             isSelectingCategories = false,
-            selectedCategories = setOf(categories[0]),
             toggleCategorySelection = {},
-            setIsSelectingCategories = {},
             activateSelection = {},
+            isSelected = { false },
         )
     }
 }

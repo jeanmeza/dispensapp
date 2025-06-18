@@ -1,12 +1,13 @@
 package com.jeanmeza.dispensapp.ui.component
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CardColors
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -28,39 +29,54 @@ import com.jeanmeza.dispensapp.ui.theme.Shapes
 fun CategoryCard(
     category: Category,
     modifier: Modifier = Modifier,
-    colors: CardColors = CardDefaults.cardColors()
-        .copy(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer,
-            contentColor = MaterialTheme.colorScheme.onSurface,
-        ),
+    selected: Boolean = false,
 ) {
+    val cardColors = if (selected)
+        CardDefaults.cardColors()
+            .copy(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            )
+    else
+        CardDefaults.cardColors()
+            .copy(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+            )
+
     ElevatedCard(
         modifier = modifier,
         shape = Shapes.small,
-        colors = colors,
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        colors = cardColors,
     ) {
         Row(
             modifier = modifier
                 .fillMaxSize()
                 .padding(dimensionResource(R.dimen.p_md)),
-            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.p_sm)),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 imageVector = DispensAppIcons.LabelOutlined,
                 contentDescription = null,
             )
+            Spacer(modifier = Modifier.width(dimensionResource(R.dimen.p_md)))
             Text(
                 text = category.name,
+                modifier = Modifier.weight(1f),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
             )
+            if (selected) {
+                Checkbox(
+                    checked = true,
+                    onCheckedChange = {},
+                )
+            }
         }
     }
 }
 
-@Preview(showSystemUi = true, showBackground = true)
+@Preview(showBackground = true)
 @Composable
 fun CategoryCardPreview() {
     DispensAppTheme {
@@ -70,6 +86,21 @@ fun CategoryCardPreview() {
                 name = "Fruits",
             ),
             modifier = Modifier.height(80.dp)
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CategoryCardSelectedPreview() {
+    DispensAppTheme {
+        CategoryCard(
+            category = Category(
+                id = 1,
+                name = "Fruits",
+            ),
+            modifier = Modifier.height(80.dp),
+            selected = true,
         )
     }
 }

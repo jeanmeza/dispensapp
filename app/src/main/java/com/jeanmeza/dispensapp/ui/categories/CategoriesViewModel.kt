@@ -65,6 +65,10 @@ class CategoriesViewModel @Inject constructor(
         toggleCategorySelection(category)
     }
 
+    fun isCategorySelected(category: Category): Boolean {
+        return _selectedCategoriesFlow.value.contains(category)
+    }
+
     fun cancelCategorySelection() {
         setIsSelectingCategories(false)
         _selectedCategoriesFlow.update { emptySet() }
