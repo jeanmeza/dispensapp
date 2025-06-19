@@ -71,6 +71,8 @@ dependencies {
     implementation(libs.androidx.compose.material.icons.extended)
     // Kotlinx datetime
     implementation(libs.kotlinx.datetime)
+    // WorkManager
+    implementation(libs.androidx.work.runtime.ktx)
 
     testImplementation(libs.junit)
 
