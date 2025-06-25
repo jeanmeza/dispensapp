@@ -73,6 +73,7 @@ dependencies {
     implementation(libs.kotlinx.datetime)
     // WorkManager
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.work)
 
     testImplementation(libs.junit)
 

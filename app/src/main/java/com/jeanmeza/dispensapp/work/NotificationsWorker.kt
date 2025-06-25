@@ -1,0 +1,18 @@
+package com.jeanmeza.dispensapp.work
+
+import android.content.Context
+import androidx.hilt.work.HiltWorker
+import androidx.work.CoroutineWorker
+import androidx.work.WorkerParameters
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
+
+@HiltWorker
+class NotificationsWorker @AssistedInject constructor(
+    @Assisted ctx: Context,
+    @Assisted params: WorkerParameters
+) : CoroutineWorker(ctx, params) {
+    override suspend fun doWork(): Result {
+        TODO("Not yet implemented")
+    }
+}
