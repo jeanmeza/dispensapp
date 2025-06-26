@@ -122,7 +122,8 @@ fun ItemCardPreviewExpired() {
                 quantity = 12,
                 measureUnit = "Kg",
                 expiryDate = Clock.System.now().minus(1.days),
-                categories = emptyList()
+                categories = emptyList(),
+                imageUri = null,
             ),
             modifier = Modifier.height(80.dp)
         )
@@ -140,7 +141,8 @@ fun ItemCardPreviewAboutToExpire() {
                 quantity = 12,
                 measureUnit = "Kg",
                 expiryDate = Clock.System.now().plus(1.days),
-                categories = emptyList()
+                categories = emptyList(),
+                imageUri = null,
             ),
             modifier = Modifier.height(80.dp)
         )
@@ -158,7 +160,8 @@ fun ItemCardPreview() {
                 quantity = 12,
                 measureUnit = "Kg",
                 expiryDate = Clock.System.now().plus(7.days),
-                categories = emptyList()
+                categories = emptyList(),
+                imageUri = null,
             ),
             modifier = Modifier.height(80.dp)
         )

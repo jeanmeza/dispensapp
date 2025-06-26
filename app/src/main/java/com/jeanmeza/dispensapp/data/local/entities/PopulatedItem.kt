@@ -1,5 +1,6 @@
 package com.jeanmeza.dispensapp.data.local.entities
 
+import androidx.core.net.toUri
 import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
@@ -26,7 +27,8 @@ fun PopulatedItem.asModel() = Item(
     quantity = item.quantity,
     measureUnit = item.measureUnit,
     expiryDate = item.expiryDate,
-    categories = categories.map(CategoryEntity::asModel)
+    categories = categories.map(CategoryEntity::asModel),
+    imageUri = item.imageUri?.toUri(),
 )
 
 fun List<PopulatedItem>.asModel() = map(PopulatedItem::asModel)

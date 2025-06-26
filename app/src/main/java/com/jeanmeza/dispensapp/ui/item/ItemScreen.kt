@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -20,6 +21,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +37,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
@@ -44,6 +47,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jeanmeza.dispensapp.R
@@ -113,7 +117,7 @@ fun ItemScreen(
 ) {
     var showDatePickerDialog by rememberSaveable { mutableStateOf(false) }
     var showCategorySelectionDialog by rememberSaveable { mutableStateOf(false) }
-    var expiryDate = item.expiryDate?.let { formattedDate(item.expiryDate) } ?: ""
+    val expiryDate = item.expiryDate?.let { formattedDate(item.expiryDate) } ?: ""
     val paddingMd = dimensionResource(R.dimen.p_md)
     val paddingSm = dimensionResource(R.dimen.p_sm)
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -147,7 +151,10 @@ fun ItemScreen(
                 coroutineScope = coroutineScope,
             )
         },
-        contentWindowInsets = WindowInsets(paddingMd, paddingMd, paddingMd, paddingMd)
+        contentWindowInsets = WindowInsets(
+            left = dimensionResource(R.dimen.p_lg),
+            right = dimensionResource(R.dimen.p_lg),
+        )
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -157,6 +164,11 @@ fun ItemScreen(
                 .consumeWindowInsets(paddingValues),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.p_md))
         ) {
+            AddAPhoto(
+                onClick = { },
+                modifier = Modifier.padding(top = dimensionResource(R.dimen.p_md)),
+            )
+
             OutlinedTextField(
                 value = item.name,
                 onValueChange = onNameChange,
@@ -168,6 +180,7 @@ fun ItemScreen(
                     imeAction = ImeAction.Next,
                 ),
             )
+
             OutlinedTextField(
                 value = categoriesString(item.categories),
                 onValueChange = {},
@@ -201,6 +214,7 @@ fun ItemScreen(
                     )
                 },
             )
+
             OutlinedTextField(
                 value = item.measureUnit,
                 onValueChange = onMeasureUnitChange,
@@ -263,6 +277,29 @@ fun ItemScreen(
                 onDateSelected = onExpiryDateChange,
                 onDismiss = { showDatePickerDialog = false }
             )
+        }
+    }
+}
+
+@Composable
+fun AddAPhoto(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        FilledTonalIconButton(
+            onClick = onClick,
+            modifier = Modifier.size(100.dp)
+        ) {
+            Icon(
+                imageVector = DispensAppIcons.AddAPhoto,
+                contentDescription = null,
+                modifier = Modifier.size(35.dp)
+            )
+        }
+        TextButton(onClick = onClick) {
+            Text(text = "Add a photo")
         }
     }
 }
@@ -359,6 +396,7 @@ fun ItemScreenPreview() {
         measureUnit = "Kg",
         expiryDate = null,
         categories = emptyList(),
+        imageUri = null,
     )
     DispensAppTheme(dynamicColor = false) {
         ItemScreen(

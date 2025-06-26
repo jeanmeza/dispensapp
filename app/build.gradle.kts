@@ -71,6 +71,8 @@ dependencies {
     implementation(libs.androidx.compose.material.icons.extended)
     // Kotlinx datetime
     implementation(libs.kotlinx.datetime)
+    // Coil
+    implementation(libs.coil.compose)
 
     testImplementation(libs.junit)
 

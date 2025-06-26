@@ -104,7 +104,7 @@ class ItemScreenViewModel @Inject constructor(
         try {
             Log.d(TAG, "onSaveClicked: $itemToSave")
 
-            val newId =itemRepository.upsert(itemToSave.asEntity()).toInt()
+            val newId = itemRepository.upsert(itemToSave.asEntity()).toInt()
             val itemId = if (newId > 0) newId else itemToSave.id
             itemToSave = itemToSave.copy(id = itemId)
 
@@ -145,6 +145,7 @@ data class ItemScreenUiState(
                 measureUnit = "",
                 expiryDate = null,
                 categories = emptyList(),
+                imageUri = null,
             )
             return ItemScreenUiState(
                 item = item,

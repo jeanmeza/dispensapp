@@ -13,6 +13,7 @@ import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material.icons.outlined.Storefront
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.AddAPhoto
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.ArrowDropUp
 import androidx.compose.material.icons.rounded.DateRange
@@ -26,6 +27,7 @@ import com.jeanmeza.dispensapp.R
 
 object DispensAppIcons {
     val Add = Icons.Rounded.Add
+    val AddAPhoto = Icons.Rounded.AddAPhoto
     val ArrowBack = Icons.AutoMirrored.Rounded.ArrowBack
     val ArrowDropDown = Icons.Rounded.ArrowDropDown
     val ArrowDropUp = Icons.Rounded.ArrowDropUp

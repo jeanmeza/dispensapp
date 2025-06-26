@@ -83,6 +83,7 @@ fun HomeScreenPreview() {
             measureUnit = "Kg",
             expiryDate = Clock.System.now(),
             categories = emptyList(),
+            imageUri = null,
         ),
         Item(
             id = 2,
@@ -91,6 +92,7 @@ fun HomeScreenPreview() {
             measureUnit = "Kg",
             expiryDate = Clock.System.now(),
             categories = emptyList(),
+            imageUri = null,
         ),
         Item(
             id = 3,
@@ -100,6 +102,7 @@ fun HomeScreenPreview() {
             expiryDate = Clock.System.now()
                 .plus(4L, DateTimeUnit.DAY, TimeZone.currentSystemDefault()),
             categories = emptyList(),
+            imageUri = null,
         ),
     )
     DispensAppTheme(darkTheme = false, dynamicColor = false) {
@@ -122,6 +125,7 @@ fun HomeScreenPreviewDark() {
             measureUnit = "Kg",
             expiryDate = Clock.System.now(),
             categories = emptyList(),
+            imageUri = null,
         ),
         Item(
             id = 2,
@@ -130,6 +134,7 @@ fun HomeScreenPreviewDark() {
             measureUnit = "Kg",
             expiryDate = Clock.System.now(),
             categories = emptyList(),
+            imageUri = null,
         ),
         Item(
             id = 3,
@@ -139,6 +144,7 @@ fun HomeScreenPreviewDark() {
             expiryDate = Clock.System.now()
                 .plus(4L, DateTimeUnit.DAY, TimeZone.currentSystemDefault()),
             categories = emptyList(),
+            imageUri = null,
         ),
     )
     DispensAppTheme(darkTheme = true, dynamicColor = false) {

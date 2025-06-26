@@ -16,6 +16,8 @@ data class ItemEntity(
     @ColumnInfo(name = "measure_unit")
     val measureUnit: String,
     @ColumnInfo(name = "expiry_date")
-    val expiryDate: Instant?
+    val expiryDate: Instant?,
+    @ColumnInfo(name = "image_uri")
+    val imageUri: String?,
 )
 

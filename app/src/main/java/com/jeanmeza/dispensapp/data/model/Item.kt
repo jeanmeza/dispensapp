@@ -1,5 +1,6 @@
 package com.jeanmeza.dispensapp.data.model
 
+import android.net.Uri
 import com.jeanmeza.dispensapp.data.local.entities.ItemEntity
 import kotlinx.datetime.Instant
 
@@ -10,6 +11,7 @@ data class Item(
     val measureUnit: String,
     val expiryDate: Instant?,
     val categories: List<Category>,
+    val imageUri: Uri?,
 )
 
 fun Item.asEntity() = ItemEntity(
@@ -18,4 +20,5 @@ fun Item.asEntity() = ItemEntity(
     quantity = quantity,
     measureUnit = measureUnit,
     expiryDate = expiryDate,
+    imageUri = imageUri?.toString()
 )
