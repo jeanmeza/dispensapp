@@ -8,6 +8,8 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.outlined.Category
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material.icons.outlined.Storefront
@@ -17,7 +19,6 @@ import androidx.compose.material.icons.rounded.AddAPhoto
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.ArrowDropUp
 import androidx.compose.material.icons.rounded.DateRange
-import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.Icon
@@ -34,7 +35,8 @@ object DispensAppIcons {
     val Categories = Icons.Filled.Category
     val CategoriesOutlined = Icons.Outlined.Category
     val DateRange = Icons.Rounded.DateRange
-    val Edit = Icons.Rounded.Edit
+    val DeleteOutlined = Icons.Outlined.Delete
+    val EditOutlined = Icons.Outlined.Edit
     val Expiring = Icons.Filled.Timer
     val ExpiringOutlined = Icons.Outlined.Timer
     val Home = Icons.Filled.Home

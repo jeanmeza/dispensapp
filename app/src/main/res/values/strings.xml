@@ -18,4 +18,9 @@
     <string name="select_categories">Select categories</string>
     <string name="new_category">New category</string>
     <string name="create_category">Create category</string>
+    <string name="camera_permission_denied">Camera permission denied</string>
+    <string name="add_picture">Add picture</string>
+    <string name="change">Change</string>
+    <string name="remove">Remove</string>
+    <string name="item_image">Item image</string>
 </resources>

@@ -1,5 +1,12 @@
 package com.jeanmeza.dispensapp.ui.item
 
+import android.Manifest
+import android.content.Context
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
@@ -15,7 +22,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
@@ -39,8 +48,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -48,8 +60,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.rememberAsyncImagePainter
 import com.jeanmeza.dispensapp.R
 import com.jeanmeza.dispensapp.data.model.Category
 import com.jeanmeza.dispensapp.data.model.Item
@@ -60,6 +74,20 @@ import com.jeanmeza.dispensapp.ui.theme.DispensAppTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
+import java.io.File
+
+fun categoriesString(categories: List<Category>): String {
+    return categories.joinToString { it.name }
+}
+
+fun createImageFile(context: Context): Uri {
+    val photosDir = File(context.filesDir, "item_photos")
+    if (photosDir.exists().not()) {
+        photosDir.mkdirs()
+    }
+    val newFile = File(photosDir, "IMG_${System.currentTimeMillis()}.jpg")
+    return FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", newFile)
+}
 
 @Composable
 fun ItemRoute(
@@ -82,6 +110,7 @@ fun ItemRoute(
         onExpiryDateChange = viewModel::onExpiryDateChange,
         onQuantityChange = viewModel::onQuantityChange,
         onCategoriesChange = viewModel::onCategoriesChange,
+        onImageUriChange = viewModel::onImageUriChange,
         onSaveClicked = viewModel::onSaveClicked,
         onDeleteClicked = {
             coroutineScope.launch {
@@ -110,6 +139,7 @@ fun ItemScreen(
     onExpiryDateChange: (Instant?) -> Unit,
     onQuantityChange: (String) -> Unit,
     onCategoriesChange: (List<Category>) -> Unit,
+    onImageUriChange: (Uri?) -> Unit,
     onSaveClicked: suspend () -> Boolean,
     onBackClicked: () -> Unit,
     onDeleteClicked: () -> Unit,
@@ -121,6 +151,39 @@ fun ItemScreen(
     val paddingMd = dimensionResource(R.dimen.p_md)
     val paddingSm = dimensionResource(R.dimen.p_sm)
     val keyboardController = LocalSoftwareKeyboardController.current
+    val context = LocalContext.current
+
+    var tempImageUri by rememberSaveable { mutableStateOf<Uri?>(null) }
+
+    val takePictureLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success) {
+            tempImageUri?.let { uri ->
+                onImageUriChange(uri)
+                tempImageUri = null
+            }
+        } else {
+            tempImageUri = null
+        }
+    }
+
+    // Permission is always required from API 26 onwards
+    val requestCameraPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            tempImageUri = createImageFile(context)
+            takePictureLauncher.launch(tempImageUri!!)
+        } else {
+            coroutineScope.launch {
+                onShowSnackbar(
+                    context.getString(R.string.camera_permission_denied),
+                    null
+                )
+            }
+        }
+    }
 
     if (showCategorySelectionDialog) {
         CategorySelectionDialog(
@@ -143,11 +206,7 @@ fun ItemScreen(
                 onShowSnackbar = onShowSnackbar,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(
-                        start = paddingSm,
-                        end = paddingMd,
-                        bottom = paddingSm
-                    ),
+                    .padding(start = paddingSm, end = paddingMd, bottom = paddingSm),
                 coroutineScope = coroutineScope,
             )
         },
@@ -164,10 +223,26 @@ fun ItemScreen(
                 .consumeWindowInsets(paddingValues),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.p_md))
         ) {
-            AddAPhoto(
-                onClick = { },
-                modifier = Modifier.padding(top = dimensionResource(R.dimen.p_md)),
-            )
+            if (item.imageUri != null) {
+                ViewPhoto(
+                    imageUri = item.imageUri,
+                    onChangeClicked = {
+                        tempImageUri = item.imageUri
+                        requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                    },
+                    onDeleteClicked = {
+                        onImageUriChange(null)
+                    },
+                    modifier = Modifier.padding(top = dimensionResource(R.dimen.p_md)),
+                )
+            } else {
+                AddPhoto(
+                    onClick = {
+                        requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                    },
+                    modifier = Modifier.padding(top = dimensionResource(R.dimen.p_md)),
+                )
+            }
 
             OutlinedTextField(
                 value = item.name,
@@ -282,7 +357,10 @@ fun ItemScreen(
 }
 
 @Composable
-fun AddAPhoto(onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun AddPhoto(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.Center,
@@ -290,22 +368,67 @@ fun AddAPhoto(onClick: () -> Unit, modifier: Modifier = Modifier) {
     ) {
         FilledTonalIconButton(
             onClick = onClick,
-            modifier = Modifier.size(100.dp)
+            modifier = Modifier.size(120.dp),
         ) {
             Icon(
                 imageVector = DispensAppIcons.AddAPhoto,
-                contentDescription = null,
-                modifier = Modifier.size(35.dp)
+                contentDescription = stringResource(R.string.add_picture),
+                modifier = Modifier.size(48.dp),
             )
         }
         TextButton(onClick = onClick) {
-            Text(text = "Add a photo")
+            Text(text = stringResource(R.string.add_picture))
         }
     }
 }
 
-fun categoriesString(categories: List<Category>): String {
-    return categories.joinToString { it.name }
+@Composable
+fun ViewPhoto(
+    imageUri: Uri,
+    onChangeClicked: () -> Unit,
+    onDeleteClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Box(
+            modifier = Modifier
+                .size(120.dp)
+                .clip(CircleShape) // Or RoundedCornerShape(8.dp)
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = rememberAsyncImagePainter(imageUri),
+                contentDescription = stringResource(R.string.item_image),
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        }
+        Row {
+            TextButton(onClick = onChangeClicked) {
+                Icon(
+                    imageVector = DispensAppIcons.EditOutlined,
+                    contentDescription = stringResource(R.string.change),
+                    modifier = Modifier.size(16.dp),
+                )
+                Spacer(modifier = Modifier.width(dimensionResource(R.dimen.p_xs)))
+                Text(text = stringResource(R.string.change))
+            }
+            TextButton(onClick = onDeleteClicked) {
+                Icon(
+                    imageVector = DispensAppIcons.DeleteOutlined,
+                    contentDescription = stringResource(R.string.remove),
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(dimensionResource(R.dimen.p_xs)))
+                Text(text = stringResource(R.string.remove))
+            }
+        }
+    }
 }
 
 @Composable
@@ -409,6 +532,7 @@ fun ItemScreenPreview() {
             onExpiryDateChange = {},
             onQuantityChange = {},
             onCategoriesChange = {},
+            onImageUriChange = {},
             onSaveClicked = { false },
             onDeleteClicked = {},
             onBackClicked = {},

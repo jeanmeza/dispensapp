@@ -1,5 +1,6 @@
 package com.jeanmeza.dispensapp.ui.item
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -82,6 +83,12 @@ class ItemScreenViewModel @Inject constructor(
         }
     }
 
+    fun onImageUriChange(imageUri: Uri?) {
+        _itemUiState.update {
+            it.copy(item = it.item.copy(imageUri = imageUri))
+        }
+    }
+
     suspend fun onSaveClicked(): Boolean {
         val currentItem = _itemUiState.value.item
         val quantity = _itemUiState.value.quantityInput.toIntOrNull()
@@ -108,8 +115,8 @@ class ItemScreenViewModel @Inject constructor(
             val itemId = if (newId > 0) newId else itemToSave.id
             itemToSave = itemToSave.copy(id = itemId)
 
-            var categoryCrossRefs = itemToSave.categoriesCrossRef()
-            var categoryIds = categoryCrossRefs.map { it.categoryId }
+            val categoryCrossRefs = itemToSave.categoriesCrossRef()
+            val categoryIds = categoryCrossRefs.map { it.categoryId }
 
             itemRepository.deleteCategoriesCrossRef(itemId, categoryIds)
             itemRepository.insertItemCategoryCrossRef(categoryCrossRefs)
