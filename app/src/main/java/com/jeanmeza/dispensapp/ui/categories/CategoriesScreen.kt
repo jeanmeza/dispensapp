@@ -4,17 +4,27 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -23,6 +33,7 @@ import com.jeanmeza.dispensapp.R
 import com.jeanmeza.dispensapp.data.model.Category
 import com.jeanmeza.dispensapp.ui.component.CategoryCard
 import com.jeanmeza.dispensapp.ui.previewprovider.CategoryScreenPreviewParameterProvider
+import com.jeanmeza.dispensapp.ui.theme.DispensAppIcons
 import com.jeanmeza.dispensapp.ui.theme.DispensAppTheme
 
 @Composable
@@ -50,40 +61,104 @@ private fun CategoriesScreen(
     modifier: Modifier = Modifier,
     isSelected: (Category) -> Boolean,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(dimensionResource(R.dimen.p_md))
-            .background(color = MaterialTheme.colorScheme.surface),
-    ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.p_md)),
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            // TODO: show only when it's selecting
+            CategorySelectionTopBar(
+                selected = 1,
+                onCancelClick = {},
+                onSelectAllClick = {},
+                onDeleteClick = {},
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentWindowInsets = WindowInsets(
+            left = dimensionResource(R.dimen.p_md),
+            top = dimensionResource(R.dimen.p_md),
+            right = dimensionResource(R.dimen.p_md),
+            bottom = dimensionResource(R.dimen.p_md),
+        )
+    )
+    { paddingValues ->
+        Column(
+            modifier = modifier
+                .background(color = Color.Transparent)
+                .fillMaxSize()
+                .padding(paddingValues)
+                .consumeWindowInsets(paddingValues),
         ) {
-            items(items = categories, key = { it.id }) { category ->
-                CategoryCard(
-                    category = category,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .combinedClickable(
-                            onClick = {
-                                if (isSelectingCategories) {
-                                    toggleCategorySelection(category)
-                                } else {
-                                    // TODO: Navigate to items screen filtering by category
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.p_md)),
+            ) {
+                items(items = categories, key = { it.id }) { category ->
+                    CategoryCard(
+                        category = category,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .combinedClickable(
+                                onClick = {
+                                    if (isSelectingCategories) {
+                                        toggleCategorySelection(category)
+                                    } else {
+                                        // TODO: Navigate to items screen filtering by category
+                                    }
+                                },
+                                onLongClick = {
+                                    if (!isSelectingCategories) {
+                                        activateSelection(category)
+                                    }
                                 }
-                            },
-                            onLongClick = {
-                                if (!isSelectingCategories) {
-                                    activateSelection(category)
-                                }
-                            }
-                        ),
-                    selected = isSelected(category),
-                )
+                            ),
+                        selected = isSelected(category),
+                    )
+                }
             }
         }
     }
+}
+
+@Composable
+private fun CategorySelectionTopBar(
+    modifier: Modifier = Modifier,
+    selected: Int,
+    onCancelClick: () -> Unit,
+    onSelectAllClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+) {
+    TopAppBar(
+        title = {
+            Text("$selected categories")
+        },
+        modifier = modifier,
+        navigationIcon = {
+            IconButton(onClick = onCancelClick) {
+                Icon(
+                    imageVector = DispensAppIcons.CloseOutlined,
+                    contentDescription = stringResource(R.string.cancel),
+                )
+            }
+        },
+        actions = {
+            IconButton(onClick = onSelectAllClick) {
+                Icon(
+                    imageVector = DispensAppIcons.SelectAll,
+                    contentDescription = stringResource(R.string.select_all),
+                )
+            }
+            IconButton(onClick = onDeleteClick) {
+                Icon(
+                    imageVector = DispensAppIcons.DeleteOutlined,
+                    contentDescription = stringResource(R.string.delete),
+                )
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors().copy(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+    )
 }
 
 @Preview(showSystemUi = true, showBackground = true)
