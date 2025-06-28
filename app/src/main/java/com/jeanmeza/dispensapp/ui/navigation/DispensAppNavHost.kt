@@ -8,7 +8,6 @@ import com.jeanmeza.dispensapp.ui.categories.navigation.categoriesScreen
 import com.jeanmeza.dispensapp.ui.expiring.navigation.expiringScreen
 import com.jeanmeza.dispensapp.ui.home.navigation.HomeRoute
 import com.jeanmeza.dispensapp.ui.home.navigation.homeScreen
-import com.jeanmeza.dispensapp.ui.item.navigation.itemScreen
 import com.jeanmeza.dispensapp.ui.shoppinglist.navigation.shoppingListScreen
 
 @Composable
@@ -36,9 +35,9 @@ fun DispensAppNavHost(
             onItemClick = onItemClicked,
         )
         shoppingListScreen()
-        itemScreen(
-            onBackClicked = navController::popBackStack,
-            onShowSnackbar = appState::onShowSnackbar,
-        )
+//        itemScreen(
+//            onBackClicked = navController::popBackStack,
+//            onShowSnackbar = appState::onShowSnackbar,
+//        )
     }
 }

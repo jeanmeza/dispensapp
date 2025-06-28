@@ -194,9 +194,7 @@ fun ItemScreen(
     }
 
     Scaffold(
-        modifier = modifier
-            .fillMaxSize()
-            .statusBarsPadding(),
+        modifier = modifier.fillMaxSize(),
         topBar = {
             ItemScreenTopBar(
                 isEditing = isEditing,
@@ -206,7 +204,7 @@ fun ItemScreen(
                 onShowSnackbar = onShowSnackbar,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = paddingSm, end = paddingMd, bottom = paddingSm),
+                    .statusBarsPadding(),
                 coroutineScope = coroutineScope,
             )
         },
