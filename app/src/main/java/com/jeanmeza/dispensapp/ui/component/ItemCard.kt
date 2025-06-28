@@ -1,5 +1,6 @@
 package com.jeanmeza.dispensapp.ui.component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,10 +20,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.jeanmeza.dispensapp.R
 import com.jeanmeza.dispensapp.data.model.Item
 import com.jeanmeza.dispensapp.ui.formattedDate
@@ -53,7 +57,16 @@ fun ItemCard(item: Item, modifier: Modifier = Modifier) {
                     .fillMaxHeight()
                     .background(color = MaterialTheme.colorScheme.surfaceContainerHighest)
                     .width(80.dp)
-            )
+            ) {
+                if (item.imageUri != null) {
+                    Image(
+                        painter = rememberAsyncImagePainter(item.imageUri),
+                        contentDescription = stringResource(R.string.item_image),
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
             Column(
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.p_sm)),
                 modifier = Modifier
@@ -100,8 +113,8 @@ private fun itemCardContainerColor(expiryDate: Instant?): Color {
     if (expiryDate == null) {
         return Color(0xFFE4FFE0)
     }
-    var today = Clock.System.now()
-    var sevenDaysFromNow = today.plus(7.days)
+    val today = Clock.System.now()
+    val sevenDaysFromNow = today.plus(7.days)
     if (expiryDate < today) {
         return Color(0xFFFDE9EB)
     }
