@@ -43,6 +43,7 @@ fun DispensApp(
     val currentDestination = appState.currentDestination
     var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
     var showModalBottomSheet by rememberSaveable { mutableStateOf(false) }
+    var shouldShowTopAppBar by rememberSaveable { mutableStateOf(true) }
 
     if (showModalBottomSheet) {
         FabOptionsBottomSheet(
@@ -111,9 +112,7 @@ fun DispensApp(
                         WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)
                     ),
             ) {
-                var shouldShowTopAppBar = false
-                if (destination != null) {
-                    shouldShowTopAppBar = true
+                if (destination != null && shouldShowTopAppBar) {
                     var searchQuery by rememberSaveable { mutableStateOf("") }
                     DispensAppSearchBar(
                         query = searchQuery,
@@ -121,17 +120,23 @@ fun DispensApp(
                         onSearch = {},
                     )
                 }
+
                 Box(
+                    // Workaround for https://issuetracker.google.com/338478720
                     modifier = Modifier
                         .consumeWindowInsets(
-                            if (shouldShowTopAppBar) {
+                            if (destination != null && shouldShowTopAppBar) {
                                 WindowInsets.safeDrawing.only(WindowInsetsSides.Top)
                             } else {
                                 WindowInsets(0, 0, 0, 0)
                             }
                         )
                 ) {
-                    DispensAppNavHost(appState = appState)
+                    DispensAppNavHost(
+                        appState = appState,
+                        onCategorySelectionStart = { shouldShowTopAppBar = false },
+                        onCategorySelectionEnd = { shouldShowTopAppBar = true },
+                    )
                 }
             }
         }

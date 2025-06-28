@@ -28,4 +28,10 @@ interface CategoryRepository {
      * Delete category from the data source
      */
     suspend fun delete(category: CategoryEntity)
+
+    /**
+     * Delete all categories from the data source
+     */
+    suspend fun delete(categories: List<CategoryEntity>)
+
 }

@@ -13,8 +13,11 @@ data object CategoriesRoute
 fun NavController.navigateToCategories(navOptions: NavOptions) =
     navigate(CategoriesRoute, navOptions)
 
-fun NavGraphBuilder.categoriesScreen() {
+fun NavGraphBuilder.categoriesScreen(onSelectionStart: () -> Unit, onSelectionEnd: () -> Unit) {
     composable<CategoriesRoute> {
-        CategoriesRoute()
+        CategoriesRoute(
+            onSelectionStart = onSelectionStart,
+            onSelectionEnd = onSelectionEnd
+        )
     }
 }

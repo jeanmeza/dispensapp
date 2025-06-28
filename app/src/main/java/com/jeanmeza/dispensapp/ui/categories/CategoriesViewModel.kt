@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jeanmeza.dispensapp.data.local.entities.asModel
 import com.jeanmeza.dispensapp.data.model.Category
+import com.jeanmeza.dispensapp.data.model.asEntityList
 import com.jeanmeza.dispensapp.data.repository.CategoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,12 +14,13 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class CategoriesViewModel @Inject constructor(
-    categoryRepository: CategoryRepository
+    private val categoryRepository: CategoryRepository
 ) : ViewModel() {
     private val _categoriesFlow = categoryRepository.getCategoriesStream()
     private val _isSelectingCategoriesFlow = MutableStateFlow(false)
@@ -69,9 +71,28 @@ class CategoriesViewModel @Inject constructor(
         return _selectedCategoriesFlow.value.contains(category)
     }
 
-    fun cancelCategorySelection() {
+    fun cancelSelection() {
         setIsSelectingCategories(false)
         _selectedCategoriesFlow.update { emptySet() }
+    }
+
+    fun selectAll() {
+        setIsSelectingCategories(true)  // Make sure we are in selection mode
+        _selectedCategoriesFlow.update {
+            val sc = it.toMutableSet()
+            sc.addAll(uiState.value.categories)
+            sc.toSet()
+        }
+    }
+
+    fun deleteSelected() {
+        val selectedCategories = _selectedCategoriesFlow.value
+        if (selectedCategories.isNotEmpty()) {
+            viewModelScope.launch {
+                categoryRepository.delete(selectedCategories.toList().asEntityList())
+                cancelSelection()
+            }
+        }
     }
 }
 

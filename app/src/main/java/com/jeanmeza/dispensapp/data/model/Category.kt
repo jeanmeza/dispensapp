@@ -13,3 +13,5 @@ fun Category.asEntity(): CategoryEntity {
         name = name,
     )
 }
+
+fun List<Category>.asEntityList(): List<CategoryEntity> = map { it.asEntity() }

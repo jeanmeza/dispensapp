@@ -4,25 +4,20 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,6 +34,8 @@ import com.jeanmeza.dispensapp.ui.theme.DispensAppTheme
 @Composable
 fun CategoriesRoute(
     modifier: Modifier = Modifier,
+    onSelectionStart: () -> Unit,
+    onSelectionEnd: () -> Unit,
     viewModel: CategoriesViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -47,8 +44,21 @@ fun CategoriesRoute(
         categories = uiState.categories,
         isSelectingCategories = uiState.isSelectingCategories,
         toggleCategorySelection = viewModel::toggleCategorySelection,
-        activateSelection = viewModel::activateSelection,
+        activateSelection = {
+            viewModel.activateSelection(it)
+            onSelectionStart()
+        },
+        cancelSelection = {
+            viewModel.cancelSelection()
+            onSelectionEnd()
+        },
+        selectAll = viewModel::selectAll,
+        deleteSelected = {
+            viewModel.deleteSelected()
+            onSelectionEnd()
+        },
         isSelected = viewModel::isCategorySelected,
+        amountSelected = uiState.selectedCategories.size,
     )
 }
 
@@ -58,62 +68,53 @@ private fun CategoriesScreen(
     isSelectingCategories: Boolean,
     toggleCategorySelection: (Category) -> Unit,
     activateSelection: (Category) -> Unit,
-    modifier: Modifier = Modifier,
+    cancelSelection: () -> Unit,
+    selectAll: () -> Unit,
+    deleteSelected: () -> Unit,
     isSelected: (Category) -> Boolean,
+    amountSelected: Int,
+    modifier: Modifier = Modifier,
 ) {
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            // TODO: show only when it's selecting
+    Column(
+        modifier = modifier
+            .background(color = MaterialTheme.colorScheme.surface)
+            .fillMaxSize()
+    ) {
+        if (isSelectingCategories) {
             CategorySelectionTopBar(
-                selected = 1,
-                onCancelClick = {},
-                onSelectAllClick = {},
-                onDeleteClick = {},
+                selected = amountSelected,
+                onCancelClick = cancelSelection,
+                onSelectAllClick = selectAll,
+                onDeleteClick = deleteSelected,
             )
-        },
-        containerColor = MaterialTheme.colorScheme.surface,
-        contentWindowInsets = WindowInsets(
-            left = dimensionResource(R.dimen.p_md),
-            top = dimensionResource(R.dimen.p_md),
-            right = dimensionResource(R.dimen.p_md),
-            bottom = dimensionResource(R.dimen.p_md),
-        )
-    )
-    { paddingValues ->
-        Column(
-            modifier = modifier
-                .background(color = Color.Transparent)
+        }
+        LazyColumn(
+            modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-                .consumeWindowInsets(paddingValues),
+                .padding(dimensionResource(R.dimen.p_md)),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.p_md)),
         ) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.p_md)),
-            ) {
-                items(items = categories, key = { it.id }) { category ->
-                    CategoryCard(
-                        category = category,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .combinedClickable(
-                                onClick = {
-                                    if (isSelectingCategories) {
-                                        toggleCategorySelection(category)
-                                    } else {
-                                        // TODO: Navigate to items screen filtering by category
-                                    }
-                                },
-                                onLongClick = {
-                                    if (!isSelectingCategories) {
-                                        activateSelection(category)
-                                    }
+            items(items = categories, key = { it.id }) { category ->
+                CategoryCard(
+                    category = category,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .combinedClickable(
+                            onClick = {
+                                if (isSelectingCategories) {
+                                    toggleCategorySelection(category)
+                                } else {
+                                    // TODO: Navigate to items screen filtering by category
                                 }
-                            ),
-                        selected = isSelected(category),
-                    )
-                }
+                            },
+                            onLongClick = {
+                                if (!isSelectingCategories) {
+                                    activateSelection(category)
+                                }
+                            }
+                        ),
+                    selected = isSelected(category),
+                )
             }
         }
     }
@@ -169,12 +170,15 @@ fun CategoriesScreenPreview(
 ) {
     DispensAppTheme {
         CategoriesScreen(
-            modifier = Modifier.statusBarsPadding(),
             categories = categories,
             isSelectingCategories = false,
             toggleCategorySelection = {},
             activateSelection = {},
+            cancelSelection = {},
+            selectAll = {},
+            deleteSelected = {},
             isSelected = { false },
+            amountSelected = 0
         )
     }
 }
