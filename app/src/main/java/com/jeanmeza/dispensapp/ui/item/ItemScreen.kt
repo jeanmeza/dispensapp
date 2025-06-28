@@ -30,11 +30,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -204,7 +204,8 @@ fun ItemScreen(
                 onShowSnackbar = onShowSnackbar,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .statusBarsPadding(),
+                    .statusBarsPadding()
+                    .padding(horizontal = paddingMd),
                 coroutineScope = coroutineScope,
             )
         },
@@ -458,7 +459,7 @@ fun ItemScreenTopBar(
             }
             Box(modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.p_xs))) {}
         }
-        OutlinedButton(
+        FilledTonalButton(
             onClick = {
                 coroutineScope.launch {
                     if (onSaveClicked()) {
@@ -467,10 +468,6 @@ fun ItemScreenTopBar(
                     }
                 }
             },
-            colors = ButtonDefaults.outlinedButtonColors().copy(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            )
         ) {
             Text(stringResource(R.string.save))
         }
