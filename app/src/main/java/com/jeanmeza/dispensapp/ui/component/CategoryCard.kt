@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -67,9 +66,10 @@ fun CategoryCard(
                 fontWeight = FontWeight.Bold,
             )
             if (selected) {
-                Checkbox(
-                    checked = true,
-                    onCheckedChange = {},
+                Icon(
+                    imageVector = DispensAppIcons.Checkbox,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             }
         }

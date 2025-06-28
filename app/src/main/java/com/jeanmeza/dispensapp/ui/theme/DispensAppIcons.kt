@@ -19,6 +19,7 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.AddAPhoto
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.ArrowDropUp
+import androidx.compose.material.icons.rounded.CheckBox
 import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.SelectAll
@@ -36,6 +37,7 @@ object DispensAppIcons {
     val ArrowDropUp = Icons.Rounded.ArrowDropUp
     val Categories = Icons.Filled.Category
     val CategoriesOutlined = Icons.Outlined.Category
+    val Checkbox = Icons.Rounded.CheckBox
     val CloseOutlined = Icons.Outlined.Close
     val DateRange = Icons.Rounded.DateRange
     val DeleteOutlined = Icons.Outlined.Delete
