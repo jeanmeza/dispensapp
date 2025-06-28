@@ -17,6 +17,13 @@ interface ItemRepository {
     fun getExpiringItemsStream(date: Long): Flow<List<PopulatedItem>>
 
     /**
+     * Retrieve the item stream for the given [id].
+     *
+     * @param id The id of the item
+     */
+    fun getItemStream(id: Int): Flow<PopulatedItem>
+
+    /**
      * Retrieve an item from the given data source that matches with the [id].
      */
     suspend fun getItem(id: Int): PopulatedItem

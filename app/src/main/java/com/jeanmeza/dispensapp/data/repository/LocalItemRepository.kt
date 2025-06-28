@@ -15,6 +15,8 @@ class LocalItemRepository @Inject constructor(private val itemDao: ItemDao) : It
 
     override suspend fun getItem(id: Int): PopulatedItem = itemDao.getItem(id)
 
+    override fun getItemStream(id: Int): Flow<PopulatedItem> = itemDao.getItemStream(id)
+
     override suspend fun upsert(item: ItemEntity): Long = itemDao.upsert(item)
 
     override suspend fun delete(item: ItemEntity) = itemDao.delete(item)

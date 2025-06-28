@@ -24,6 +24,10 @@ interface ItemDao {
 
     @Transaction
     @Query("SELECT * FROM item WHERE id = :id")
+    fun getItemStream(id: Int): Flow<PopulatedItem>
+
+    @Transaction
+    @Query("SELECT * FROM item WHERE id = :id")
     suspend fun getItem(id: Int): PopulatedItem
 
     @Upsert

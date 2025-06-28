@@ -1,6 +1,7 @@
 package com.jeanmeza.dispensapp.ui.item
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.window.Dialog
@@ -15,6 +16,10 @@ fun ItemDialog(
     onShowSnackbar: suspend (String, String?) -> Boolean,
     viewModel: ItemScreenViewModel = hiltViewModel()
 ) {
+    LaunchedEffect(Unit) {
+        viewModel.resetToFreshState()
+    }
+
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(

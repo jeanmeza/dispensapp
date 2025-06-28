@@ -49,11 +49,20 @@ class ItemScreenViewModel @AssistedInject constructor(
         }
     }
 
+    fun resetToFreshState() {
+        if (isEditing) {
+            loadItemForEditing(itemId!!)
+        } else {
+            ItemScreenUiState.new()
+        }
+    }
+
     private fun loadItemForEditing(itemId: Int) {
         viewModelScope.launch {
-            val item = itemRepository.getItem(itemId)
-            _itemUiState.update {
-                ItemScreenUiState(item.asModel())
+            itemRepository.getItemStream(itemId).collect { populatedItem ->
+                _itemUiState.update {
+                    ItemScreenUiState(populatedItem.asModel())
+                }
             }
         }
     }
