@@ -18,6 +18,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -130,9 +131,11 @@ private fun CategorySelectionTopBar(
     onSelectAllClick: () -> Unit,
     onDeleteClick: () -> Unit,
 ) {
+    val resources = LocalContext.current.resources
     TopAppBar(
         title = {
-            Text("$selected categories")
+            val categories = resources.getQuantityString(R.plurals.categories, selected, selected)
+            Text(categories)
         },
         modifier = modifier,
         navigationIcon = {

@@ -24,4 +24,8 @@
     <string name="remove">Remove</string>
     <string name="item_image">Item image</string>
     <string name="select_all">Select all</string>
+    <plurals name="categories">
+        <item quantity="one">%d Category</item>
+        <item quantity="other">%d Categories</item>
+    </plurals>
 </resources>
