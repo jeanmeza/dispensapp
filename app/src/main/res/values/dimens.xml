@@ -13,4 +13,7 @@
     <dimen name="m_md">16dp</dimen>
     <dimen name="m_lg">24dp</dimen>
     <dimen name="m_xl">32dp</dimen>
+
+    <dimen name="item_screen_photo_box_size">200dp</dimen>
+    <dimen name="item_screen_icon_size">80dp</dimen>
 </resources>

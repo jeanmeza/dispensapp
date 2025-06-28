@@ -149,7 +149,6 @@ fun ItemScreen(
     var showCategorySelectionDialog by rememberSaveable { mutableStateOf(false) }
     val expiryDate = item.expiryDate?.let { formattedDate(item.expiryDate) } ?: ""
     val paddingMd = dimensionResource(R.dimen.p_md)
-    val paddingSm = dimensionResource(R.dimen.p_sm)
     val keyboardController = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
 
@@ -367,12 +366,12 @@ fun AddPhoto(
     ) {
         FilledTonalIconButton(
             onClick = onClick,
-            modifier = Modifier.size(120.dp),
+            modifier = Modifier.size(dimensionResource(R.dimen.item_screen_photo_box_size)),
         ) {
             Icon(
                 imageVector = DispensAppIcons.AddAPhoto,
                 contentDescription = stringResource(R.string.add_picture),
-                modifier = Modifier.size(48.dp),
+                modifier = Modifier.size(dimensionResource(R.dimen.item_screen_icon_size)),
             )
         }
         TextButton(onClick = onClick) {
@@ -395,7 +394,7 @@ fun ViewPhoto(
     ) {
         Box(
             modifier = Modifier
-                .size(120.dp)
+                .size(dimensionResource(R.dimen.item_screen_photo_box_size))
                 .clip(CircleShape) // Or RoundedCornerShape(8.dp)
                 .background(MaterialTheme.colorScheme.surfaceContainerHigh),
             contentAlignment = Alignment.Center
