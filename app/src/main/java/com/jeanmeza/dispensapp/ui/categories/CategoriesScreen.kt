@@ -43,7 +43,9 @@ fun CategoriesRoute(
         modifier = modifier,
         categories = uiState.categories,
         isSelectingCategories = uiState.isSelectingCategories,
-        toggleCategorySelection = viewModel::toggleCategorySelection,
+        toggleCategorySelection = {
+            viewModel.toggleCategorySelection(it, onSelectionEnd)
+        },
         activateSelection = {
             viewModel.activateSelection(it)
             onSelectionStart()

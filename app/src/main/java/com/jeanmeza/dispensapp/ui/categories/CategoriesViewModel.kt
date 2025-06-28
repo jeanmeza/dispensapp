@@ -43,7 +43,7 @@ class CategoriesViewModel @Inject constructor(
             initialValue = CategoriesUiState.new()
         )
 
-    fun toggleCategorySelection(category: Category) {
+    fun toggleCategorySelection(category: Category, onSelectionEnd: (() -> Unit)? = null) {
         _selectedCategoriesFlow.getAndUpdate {
             val sc = it.toMutableSet()
             if (sc.contains(category)) {
@@ -55,6 +55,7 @@ class CategoriesViewModel @Inject constructor(
         }
         if (_selectedCategoriesFlow.value.isEmpty()) {
             setIsSelectingCategories(false)
+            onSelectionEnd?.invoke()
         }
     }
 
