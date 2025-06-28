@@ -13,24 +13,30 @@ import com.jeanmeza.dispensapp.data.model.Item
 import com.jeanmeza.dispensapp.data.model.asEntity
 import com.jeanmeza.dispensapp.data.repository.ItemRepository
 import com.jeanmeza.dispensapp.ui.item.navigation.ItemRoute
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
-import javax.inject.Inject
 
 const val TAG = "ItemScreenViewModel"
 
-@HiltViewModel
-class ItemScreenViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = ItemScreenViewModel.Factory::class)
+class ItemScreenViewModel @AssistedInject constructor(
     private val itemRepository: ItemRepository,
     savedStateHandle: SavedStateHandle,
+    @Assisted assistedItemId: Int?
 ) : ViewModel() {
 
-    private val itemRoute: ItemRoute = savedStateHandle.toRoute()
-    private val itemId: Int? = itemRoute.itemId
+    private val itemId: Int? = assistedItemId ?: try {
+        savedStateHandle.toRoute<ItemRoute>().itemId
+    } catch (_: Exception) {
+        null
+    }
 
     val isEditing = itemId != null
 
@@ -134,6 +140,11 @@ class ItemScreenViewModel @Inject constructor(
         }
     }
 
+
+    @AssistedFactory
+    interface Factory {
+        fun create(itemId: Int?): ItemScreenViewModel
+    }
 }
 
 data class ItemScreenUiState(

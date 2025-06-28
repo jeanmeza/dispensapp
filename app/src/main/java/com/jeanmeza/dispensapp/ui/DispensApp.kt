@@ -23,13 +23,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import com.jeanmeza.dispensapp.ui.categories.CategoryDialog
 import com.jeanmeza.dispensapp.ui.component.DispensAppSearchBar
 import com.jeanmeza.dispensapp.ui.component.FabOptionsBottomSheet
-import com.jeanmeza.dispensapp.ui.item.navigation.navigateToItem
+import com.jeanmeza.dispensapp.ui.item.ItemDialog
+import com.jeanmeza.dispensapp.ui.item.ItemScreenViewModel
 import com.jeanmeza.dispensapp.ui.navigation.DispensAppNavHost
 import com.jeanmeza.dispensapp.ui.theme.DispensAppIcons
 import kotlin.reflect.KClass
@@ -44,11 +46,16 @@ fun DispensApp(
     var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
     var showModalBottomSheet by rememberSaveable { mutableStateOf(false) }
     var shouldShowTopAppBar by rememberSaveable { mutableStateOf(true) }
+    var showItemDialog by rememberSaveable { mutableStateOf(false) }
+    var itemIdToEdit by rememberSaveable { mutableStateOf<Int?>(null) }
 
     if (showModalBottomSheet) {
         FabOptionsBottomSheet(
             onDismiss = { showModalBottomSheet = false },
-            onItemOptionSelected = { appState.navController.navigateToItem() },
+            onItemOptionSelected = {
+                itemIdToEdit = null
+                showItemDialog = true
+            },
             onCategoryOptionSelected = { showCategoryDialog = true },
             onShoppingListOptionSelected = {},
         )
@@ -57,6 +64,18 @@ fun DispensApp(
     if (showCategoryDialog) {
         CategoryDialog(
             onDismiss = { showCategoryDialog = false },
+        )
+    }
+
+    if (showItemDialog) {
+        ItemDialog(
+            onDismiss = { showItemDialog = false },
+            onShowSnackbar = appState::onShowSnackbar,
+            viewModel = hiltViewModel<ItemScreenViewModel, ItemScreenViewModel.Factory>(
+                key = itemIdToEdit?.toString()
+            ) {
+                it.create(itemIdToEdit)
+            }
         )
     }
 
@@ -134,6 +153,10 @@ fun DispensApp(
                 ) {
                     DispensAppNavHost(
                         appState = appState,
+                        onItemClicked = {
+                            itemIdToEdit = it
+                            showItemDialog = true
+                        },
                         onCategorySelectionStart = { shouldShowTopAppBar = false },
                         onCategorySelectionEnd = { shouldShowTopAppBar = true },
                     )
