@@ -41,6 +41,12 @@ android {
     buildFeatures {
         compose = true
     }
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -56,7 +62,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     // Room
     implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.ui.test.junit4.android)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
     // Navigation
@@ -82,11 +87,15 @@ dependencies {
     testImplementation(libs.mockito.inline)
     testImplementation(libs.turbine)
     testImplementation(kotlin("test"))
+    testImplementation(libs.google.dagger.hilt.android.testing)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.ui.test.junit4.android)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.androidx.ui.test.junit4.android)
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)

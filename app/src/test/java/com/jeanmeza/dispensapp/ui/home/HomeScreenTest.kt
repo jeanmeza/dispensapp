@@ -6,18 +6,41 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.jeanmeza.dispensapp.data.model.Item
 import com.jeanmeza.dispensapp.ui.theme.DispensAppTheme
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
+import dagger.hilt.android.testing.HiltTestApplication
 import kotlinx.datetime.Clock
+import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.verify
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
+import kotlin.test.Test
 
+@HiltAndroidTest
+@RunWith(RobolectricTestRunner::class)
+@Config(
+    minSdk = 26,
+    maxSdk = 36,
+    application = HiltTestApplication::class
+)
 class HomeScreenTest {
-    @get:Rule
+
+    @get:Rule(order = 0)
+    var hiltRule = HiltAndroidRule(this)
+
+    @get:Rule(order = 1)
     val composeTestRule = createComposeRule()
 
+    @Before
+    fun setUp() {
+        hiltRule.inject()
+    }
+
     @Test
-    fun `homeScreen displays empty state when no items`() {
+    fun homeScreen_displays_empty_state_when_no_items() {
         composeTestRule.setContent {
             DispensAppTheme {
                 HomeScreen(
@@ -29,7 +52,7 @@ class HomeScreenTest {
     }
 
     @Test
-    fun `homeScreen displays items when items are provided`() {
+    fun homeScreen_displays_items_when_items_are_provided() {
         // Arrange
         val items = listOf(
             createItem(1, "Item 1", 2, "kg"),
@@ -52,12 +75,12 @@ class HomeScreenTest {
     }
 
     @Test
-    fun `homeScreen calls onItemClick when item is clicked`() {
+    fun homeScreen_calls_onItemClick_when_item_is_clicked() {
         // Arrange
         val mockOnItemClick: (Int) -> Unit = mock()
         val items = listOf(
             createItem(1, "Item 1", 2, "kg"),
-            createItem(1, "Item 2", 2, "l"),
+            createItem(2, "Item 2", 2, "l"),
         )
         // Act
         composeTestRule.setContent {
