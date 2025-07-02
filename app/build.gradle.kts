@@ -49,7 +49,7 @@ android {
     }
 }
 
-val mockitoAgent = configurations.create("mockitoAgent")
+val mockitoAgent: Configuration by configurations.creating
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -102,4 +102,8 @@ dependencies {
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+tasks.withType<Test> {
+    jvmArgs("-javaagent:${mockitoAgent.asPath}")
 }
