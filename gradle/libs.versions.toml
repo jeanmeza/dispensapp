@@ -11,7 +11,7 @@ composeBom = "2025.06.01"
 lifecycleViewModelCompose = "2.9.1"
 googleDevToolsKsp = "2.1.20-2.0.0"
 mockitoCore = "5.18.0"
-mockitoInline = "5.2.0"
+# mockitoAndroid = "5.18.0"
 mockitoKotlin = "5.4.0"
 robolectric = "4.15.1"
 room = "2.7.2"
@@ -66,9 +66,9 @@ coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coi
 # Coroutines Test
 jetbrains-kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
 # Mockito
-mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
-mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
-mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
+mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockitoCore" }
+# mockito-android = { group = "org.mockito", name = "mockito-android", version.ref = "mockitoAndroid" }
+mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockitoKotlin" }
 
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }

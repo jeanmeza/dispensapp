@@ -49,6 +49,7 @@ android {
     }
 }
 
+val mockitoAgent = configurations.create("mockitoAgent")
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -82,14 +83,16 @@ dependencies {
 
     testImplementation(libs.junit)
     testImplementation(libs.jetbrains.kotlinx.coroutines.test)
-    testImplementation(libs.mockito.core)
-    testImplementation(libs.mockito.kotlin)
-    testImplementation(libs.mockito.inline)
     testImplementation(libs.turbine)
     testImplementation(kotlin("test"))
     testImplementation(libs.google.dagger.hilt.android.testing)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.ui.test.junit4.android)
+
+    // Mockito + Mockito Agent
+    testImplementation(libs.mockito.core)
+    mockitoAgent(libs.mockito.core) { isTransitive = false }
+    testImplementation(libs.mockito.kotlin)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

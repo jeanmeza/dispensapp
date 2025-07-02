@@ -1,5 +1,7 @@
 package com.jeanmeza.dispensapp.ui.home
 
+import android.os.Build.VERSION_CODES.O
+import android.os.Build.VERSION_CODES.VANILLA_ICE_CREAM
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -22,8 +24,7 @@ import kotlin.test.Test
 @HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 @Config(
-    minSdk = 26,
-    maxSdk = 36,
+    sdk = [O, VANILLA_ICE_CREAM],
     application = HiltTestApplication::class
 )
 class HomeScreenTest {
