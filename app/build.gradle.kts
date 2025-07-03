@@ -49,7 +49,7 @@ android {
     }
 }
 
-val mockitoAgent: Configuration by configurations.creating
+//val mockitoAgent: Configuration by configurations.creating
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -91,7 +91,7 @@ dependencies {
 
     // Mockito + Mockito Agent
     testImplementation(libs.mockito.core)
-    mockitoAgent(libs.mockito.core) { isTransitive = false }
+//    mockitoAgent(libs.mockito.core) { isTransitive = false }
     testImplementation(libs.mockito.kotlin)
 
     androidTestImplementation(libs.androidx.junit)
@@ -104,6 +104,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 }
 
+/*
 tasks.withType<Test> {
     jvmArgs("-javaagent:${mockitoAgent.asPath}")
-}
+}*/
