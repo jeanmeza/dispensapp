@@ -41,8 +41,15 @@ android {
     buildFeatures {
         compose = true
     }
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
 }
 
+//val mockitoAgent: Configuration by configurations.creating
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -77,12 +84,29 @@ dependencies {
     implementation(libs.coil.compose)
 
     testImplementation(libs.junit)
+    testImplementation(libs.jetbrains.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
+    testImplementation(kotlin("test"))
+    testImplementation(libs.google.dagger.hilt.android.testing)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.ui.test.junit4.android)
+
+    // Mockito + Mockito Agent
+    testImplementation(libs.mockito.core)
+//    mockitoAgent(libs.mockito.core) { isTransitive = false }
+    testImplementation(libs.mockito.kotlin)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.androidx.ui.test.junit4.android)
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
+
+/*
+tasks.withType<Test> {
+    jvmArgs("-javaagent:${mockitoAgent.asPath}")
+}*/

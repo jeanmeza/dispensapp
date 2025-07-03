@@ -43,7 +43,7 @@ fun HomeRoute(
 }
 
 @Composable
-private fun HomeScreen(
+fun HomeScreen(
     items: List<Item>,
     onItemClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
