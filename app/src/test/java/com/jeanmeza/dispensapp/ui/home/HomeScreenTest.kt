@@ -11,7 +11,6 @@ import com.jeanmeza.dispensapp.ui.theme.DispensAppTheme
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
-import kotlinx.datetime.Clock
 import org.junit.Before
 import org.junit.Rule
 import org.junit.runner.RunWith
@@ -20,6 +19,7 @@ import org.mockito.kotlin.verify
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import kotlin.test.Test
+import kotlin.time.Clock
 
 @HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)

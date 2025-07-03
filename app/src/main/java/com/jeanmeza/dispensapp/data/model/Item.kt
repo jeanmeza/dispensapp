@@ -2,7 +2,7 @@ package com.jeanmeza.dispensapp.data.model
 
 import android.net.Uri
 import com.jeanmeza.dispensapp.data.local.entities.ItemEntity
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 data class Item(
     val id: Int,

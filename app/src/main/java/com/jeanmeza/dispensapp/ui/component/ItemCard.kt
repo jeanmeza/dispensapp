@@ -32,9 +32,9 @@ import com.jeanmeza.dispensapp.data.model.Item
 import com.jeanmeza.dispensapp.ui.formattedDate
 import com.jeanmeza.dispensapp.ui.theme.DispensAppTheme
 import com.jeanmeza.dispensapp.ui.theme.Shapes
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Instant
 
 @Composable
 fun ItemCard(item: Item, modifier: Modifier = Modifier) {

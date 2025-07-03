@@ -73,8 +73,8 @@ import com.jeanmeza.dispensapp.ui.theme.DispensAppIcons
 import com.jeanmeza.dispensapp.ui.theme.DispensAppTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Instant
 import java.io.File
+import kotlin.time.Instant
 
 fun categoriesString(categories: List<Category>): String {
     return categories.joinToString { it.name }

@@ -1,7 +1,7 @@
 package com.jeanmeza.dispensapp.data.local.util
 
 import androidx.room.TypeConverter
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 class InstantConverter {
     @TypeConverter

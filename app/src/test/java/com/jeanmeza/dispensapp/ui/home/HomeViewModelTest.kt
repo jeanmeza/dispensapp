@@ -7,7 +7,6 @@ import com.jeanmeza.dispensapp.data.repository.ItemRepository
 import com.jeanmeza.dispensapp.util.MainDispatcherRule
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.Clock
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -15,6 +14,7 @@ import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.whenever
 import kotlin.test.assertEquals
+import kotlin.time.Clock
 
 class HomeViewModelTest {
     @get:Rule
