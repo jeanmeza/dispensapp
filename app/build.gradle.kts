@@ -64,9 +64,11 @@ dependencies {
     implementation(libs.google.dagger.hilt.android)
     ksp(libs.google.dagger.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
-    // Material 3 Adaptive Navigation Suite
-    implementation(libs.androidx.material3.adaptive.navigation.suite)
-    implementation(libs.androidx.material3.adaptive.navigation)
+    // Material 3 Adaptive
+    implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
+    implementation(libs.androidx.compose.material3.adaptive.navigation)
+    implementation(libs.androidx.compose.material3.adaptive.layout)
+    implementation(libs.androidx.compose.material3.windowSizeClass)
     // Material Icons Extended
     implementation(libs.androidx.compose.material.icons.extended)
     // Kotlinx datetime
