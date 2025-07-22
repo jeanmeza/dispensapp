@@ -83,6 +83,9 @@ dependencies {
     implementation(libs.kotlinx.datetime)
     // Coil
     implementation(libs.coil.compose)
+    // Scanning
+    implementation(libs.google.android.gms.play.services.code.scanner)
+    implementation(libs.kotlinx.coroutines.play.services)
 
     testImplementation(libs.junit)
     testImplementation(libs.jetbrains.kotlinx.coroutines.test)
