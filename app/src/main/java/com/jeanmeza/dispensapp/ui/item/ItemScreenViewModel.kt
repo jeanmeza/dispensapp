@@ -29,7 +29,8 @@ const val TAG = "ItemScreenViewModel"
 class ItemScreenViewModel @AssistedInject constructor(
     private val itemRepository: ItemRepository,
     savedStateHandle: SavedStateHandle,
-    @Assisted assistedItemId: Int?
+    @Assisted assistedItemId: Int?,
+    @Assisted assistedItemName: String?,
 ) : ViewModel() {
 
     private val itemId: Int? = assistedItemId ?: try {
@@ -46,6 +47,11 @@ class ItemScreenViewModel @AssistedInject constructor(
     init {
         if (isEditing) {
             loadItemForEditing(itemId!!)
+        } else {
+            if (assistedItemName != null)
+                _itemUiState.update {
+                    it.copy(item = it.item.copy(name = assistedItemName))
+                }
         }
     }
 
@@ -152,7 +158,7 @@ class ItemScreenViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(itemId: Int?): ItemScreenViewModel
+        fun create(itemId: Int?, itemName: String?): ItemScreenViewModel
     }
 }
 

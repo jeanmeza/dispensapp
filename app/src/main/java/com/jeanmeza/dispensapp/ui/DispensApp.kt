@@ -56,16 +56,35 @@ fun DispensApp(
     var showItemDialog by rememberSaveable { mutableStateOf(false) }
     var itemIdToEdit by rememberSaveable { mutableStateOf<Int?>(null) }
     var showScanDialog by rememberSaveable { mutableStateOf(false) }
+    var itemScannedName by rememberSaveable { mutableStateOf<String?>(null) }
 
     if (showScanDialog) {
         ScanBarcodeDialog(
             onDismiss = { showScanDialog = false },
             onScanSuccess = {
                 itemIdToEdit = null
+                itemScannedName = it
                 showScanDialog = false
                 showItemDialog = true
             },
             barcodeScanner = appState.barcodeScanner,
+        )
+    }
+
+    if (showItemDialog) {
+        ItemDialog(
+            onDismiss = {
+                showItemDialog = false
+                itemIdToEdit = null
+                itemScannedName = null
+            },
+            onShowSnackbar = appState::onShowSnackbar,
+            viewModel = hiltViewModel<ItemScreenViewModel, ItemScreenViewModel.Factory>(
+                key = "${itemIdToEdit}_${itemScannedName}"
+                // TODO I want to send the scanned item name here
+            ) {
+                it.create(itemIdToEdit, itemScannedName)
+            }
         )
     }
 
@@ -84,18 +103,6 @@ fun DispensApp(
     if (showCategoryDialog) {
         CategoryDialog(
             onDismiss = { showCategoryDialog = false },
-        )
-    }
-
-    if (showItemDialog) {
-        ItemDialog(
-            onDismiss = { showItemDialog = false },
-            onShowSnackbar = appState::onShowSnackbar,
-            viewModel = hiltViewModel<ItemScreenViewModel, ItemScreenViewModel.Factory>(
-                key = itemIdToEdit?.toString()
-            ) {
-                it.create(itemIdToEdit)
-            }
         )
     }
 
