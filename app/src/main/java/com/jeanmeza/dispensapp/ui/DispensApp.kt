@@ -62,6 +62,7 @@ fun DispensApp(
             onDismiss = { showScanDialog = false },
             onScanSuccess = {
                 itemIdToEdit = null
+                showScanDialog = false
                 showItemDialog = true
             },
             barcodeScanner = appState.barcodeScanner,
