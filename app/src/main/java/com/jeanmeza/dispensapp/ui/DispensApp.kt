@@ -1,5 +1,6 @@
 package com.jeanmeza.dispensapp.ui
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -12,7 +13,9 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
@@ -21,17 +24,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
+import com.jeanmeza.dispensapp.R
 import com.jeanmeza.dispensapp.ui.categories.CategoryDialog
 import com.jeanmeza.dispensapp.ui.component.DispensAppSearchBar
 import com.jeanmeza.dispensapp.ui.component.FabOptionsBottomSheet
 import com.jeanmeza.dispensapp.ui.item.ItemDialog
 import com.jeanmeza.dispensapp.ui.item.ItemScreenViewModel
+import com.jeanmeza.dispensapp.ui.item.ScanBarcodeDialog
 import com.jeanmeza.dispensapp.ui.navigation.DispensAppNavHost
 import com.jeanmeza.dispensapp.ui.theme.DispensAppIcons
 import kotlin.reflect.KClass
@@ -48,6 +55,18 @@ fun DispensApp(
     var shouldShowTopAppBar by rememberSaveable { mutableStateOf(true) }
     var showItemDialog by rememberSaveable { mutableStateOf(false) }
     var itemIdToEdit by rememberSaveable { mutableStateOf<Int?>(null) }
+    var showScanDialog by rememberSaveable { mutableStateOf(false) }
+
+    if (showScanDialog) {
+        ScanBarcodeDialog(
+            onDismiss = { showScanDialog = false },
+            onScanSuccess = {
+                itemIdToEdit = null
+                showItemDialog = true
+            },
+            barcodeScanner = appState.barcodeScanner,
+        )
+    }
 
     if (showModalBottomSheet) {
         FabOptionsBottomSheet(
@@ -112,11 +131,28 @@ fun DispensApp(
             },
             floatingActionButton = {
                 if (destination != null) {
-                    FloatingActionButton(onClick = { showModalBottomSheet = true }) {
-                        Icon(
-                            imageVector = DispensAppIcons.Add,
-                            contentDescription = null,
-                        )
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.p_sm)),
+                        horizontalAlignment = Alignment.End,
+                    ) {
+                        SmallFloatingActionButton(
+                            onClick = {
+                                showScanDialog = true
+                            },
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                        ) {
+                            Icon(
+                                imageVector = DispensAppIcons.PhotoCamera,
+                                contentDescription = null,
+                            )
+                        }
+                        FloatingActionButton(onClick = { showModalBottomSheet = true }) {
+                            Icon(
+                                imageVector = DispensAppIcons.Add,
+                                contentDescription = null,
+                            )
+                        }
                     }
                 }
             },
