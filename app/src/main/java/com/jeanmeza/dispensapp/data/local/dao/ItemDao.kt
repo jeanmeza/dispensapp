@@ -24,7 +24,7 @@ interface ItemDao {
 
     @Transaction
     @Query("SELECT * FROM item WHERE id = :id")
-    fun getItemStream(id: Int): Flow<PopulatedItem>
+    fun getItemStream(id: Int): Flow<PopulatedItem?>
 
     @Transaction
     @Query("SELECT * FROM item WHERE id = :id")
@@ -46,5 +46,4 @@ interface ItemDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertItemCategoryCrossRef(itemCategories: List<ItemCategoryCrossRef>)
-
 }

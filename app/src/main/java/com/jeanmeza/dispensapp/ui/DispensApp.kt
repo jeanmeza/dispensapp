@@ -13,9 +13,9 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
@@ -38,7 +38,6 @@ import com.jeanmeza.dispensapp.ui.component.DispensAppSearchBar
 import com.jeanmeza.dispensapp.ui.component.FabOptionsBottomSheet
 import com.jeanmeza.dispensapp.ui.item.ItemDialog
 import com.jeanmeza.dispensapp.ui.item.ItemScreenViewModel
-import com.jeanmeza.dispensapp.ui.item.ScanBarcodeDialog
 import com.jeanmeza.dispensapp.ui.navigation.DispensAppNavHost
 import com.jeanmeza.dispensapp.ui.theme.DispensAppIcons
 import kotlin.reflect.KClass
@@ -55,35 +54,20 @@ fun DispensApp(
     var shouldShowTopAppBar by rememberSaveable { mutableStateOf(true) }
     var showItemDialog by rememberSaveable { mutableStateOf(false) }
     var itemIdToEdit by rememberSaveable { mutableStateOf<Int?>(null) }
-    var showScanDialog by rememberSaveable { mutableStateOf(false) }
-    var itemScannedName by rememberSaveable { mutableStateOf<String?>(null) }
-
-    if (showScanDialog) {
-        ScanBarcodeDialog(
-            onDismiss = { showScanDialog = false },
-            onScanSuccess = {
-                itemIdToEdit = null
-                itemScannedName = it
-                showScanDialog = false
-                showItemDialog = true
-            },
-            barcodeScanner = appState.barcodeScanner,
-        )
-    }
+    var scanItem by rememberSaveable { mutableStateOf(false) }
 
     if (showItemDialog) {
         ItemDialog(
             onDismiss = {
-                showItemDialog = false
                 itemIdToEdit = null
-                itemScannedName = null
+                showItemDialog = false
+                scanItem = false
             },
             onShowSnackbar = appState::onShowSnackbar,
             viewModel = hiltViewModel<ItemScreenViewModel, ItemScreenViewModel.Factory>(
-                key = "${itemIdToEdit}_${itemScannedName}"
-                // TODO I want to send the scanned item name here
+                key = "${itemIdToEdit}_${scanItem}_${System.currentTimeMillis()}"
             ) {
-                it.create(itemIdToEdit, itemScannedName)
+                it.create(itemIdToEdit, scanItem)
             }
         )
     }
@@ -143,9 +127,10 @@ fun DispensApp(
                         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.p_sm)),
                         horizontalAlignment = Alignment.End,
                     ) {
-                        SmallFloatingActionButton(
+                        FloatingActionButton(
                             onClick = {
-                                showScanDialog = true
+                                showItemDialog = true
+                                scanItem = true
                             },
                             containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                             contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
@@ -155,7 +140,7 @@ fun DispensApp(
                                 contentDescription = null,
                             )
                         }
-                        FloatingActionButton(onClick = { showModalBottomSheet = true }) {
+                        LargeFloatingActionButton(onClick = { showModalBottomSheet = true }) {
                             Icon(
                                 imageVector = DispensAppIcons.Add,
                                 contentDescription = null,

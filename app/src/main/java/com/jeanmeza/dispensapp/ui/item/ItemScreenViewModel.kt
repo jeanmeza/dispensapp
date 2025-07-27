@@ -13,6 +13,7 @@ import com.jeanmeza.dispensapp.data.model.Item
 import com.jeanmeza.dispensapp.data.model.asEntity
 import com.jeanmeza.dispensapp.data.repository.ItemRepository
 import com.jeanmeza.dispensapp.ui.item.navigation.ItemRoute
+import com.jeanmeza.dispensapp.util.BarcodeScanner
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -28,9 +29,10 @@ const val TAG = "ItemScreenViewModel"
 @HiltViewModel(assistedFactory = ItemScreenViewModel.Factory::class)
 class ItemScreenViewModel @AssistedInject constructor(
     private val itemRepository: ItemRepository,
+    private val barcodeScanner: BarcodeScanner,
     savedStateHandle: SavedStateHandle,
     @Assisted assistedItemId: Int?,
-    @Assisted assistedItemName: String?,
+    @Assisted private val assistedScanItem: Boolean,
 ) : ViewModel() {
 
     private val itemId: Int? = assistedItemId ?: try {
@@ -45,13 +47,33 @@ class ItemScreenViewModel @AssistedInject constructor(
     val itemUiState = _itemUiState.asStateFlow()
 
     init {
-        if (isEditing) {
-            loadItemForEditing(itemId!!)
-        } else {
-            if (assistedItemName != null)
-                _itemUiState.update {
-                    it.copy(item = it.item.copy(name = assistedItemName))
+        if (assistedScanItem) {
+            initiateScan()
+        }
+        resetToFreshState()
+    }
+
+    private fun initiateScan() {
+        viewModelScope.launch {
+            // Start the scanning process
+            barcodeScanner.scan()
+        }
+
+        // Collect the scan results
+        viewModelScope.launch {
+            barcodeScanner.barCodeResults.collect { scannedValue ->
+                scannedValue?.let { value ->
+                    // Use the scanned value to update the item name
+                    _itemUiState.update { currentState ->
+                        currentState.copy(
+                            item = currentState.item.copy(name = value)
+                        )
+                    }
+
+                    // Clear the barcode result after using it
+                    barcodeScanner.barCodeResults.value = null
                 }
+            }
         }
     }
 
@@ -59,7 +81,9 @@ class ItemScreenViewModel @AssistedInject constructor(
         if (isEditing) {
             loadItemForEditing(itemId!!)
         } else {
-            ItemScreenUiState.new()
+            _itemUiState.update {
+                ItemScreenUiState.new()
+            }
         }
     }
 
@@ -67,7 +91,11 @@ class ItemScreenViewModel @AssistedInject constructor(
         viewModelScope.launch {
             itemRepository.getItemStream(itemId).collect { populatedItem ->
                 _itemUiState.update {
-                    ItemScreenUiState(populatedItem.asModel())
+                    if (populatedItem != null) {
+                        ItemScreenUiState(populatedItem.asModel())
+                    } else {
+                        ItemScreenUiState.new()
+                    }
                 }
             }
         }
@@ -151,6 +179,9 @@ class ItemScreenViewModel @AssistedInject constructor(
 
     fun onDeleteClicked() {
         viewModelScope.launch {
+            val currentItem = _itemUiState.value.item
+            val categoryIds = currentItem.categories.map { it.id }
+            itemRepository.deleteCategoriesCrossRef(currentItem.id, categoryIds)
             itemRepository.delete(_itemUiState.value.item.asEntity())
         }
     }
@@ -158,7 +189,7 @@ class ItemScreenViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(itemId: Int?, itemName: String?): ItemScreenViewModel
+        fun create(itemId: Int?, scanItem: Boolean): ItemScreenViewModel
     }
 }
 

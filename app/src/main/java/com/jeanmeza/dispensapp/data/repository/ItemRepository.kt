@@ -21,7 +21,7 @@ interface ItemRepository {
      *
      * @param id The id of the item
      */
-    fun getItemStream(id: Int): Flow<PopulatedItem>
+    fun getItemStream(id: Int): Flow<PopulatedItem?>
 
     /**
      * Retrieve an item from the given data source that matches with the [id].
