@@ -12,6 +12,7 @@ import com.jeanmeza.dispensapp.data.model.Category
 import com.jeanmeza.dispensapp.data.model.Item
 import com.jeanmeza.dispensapp.data.model.asEntity
 import com.jeanmeza.dispensapp.data.repository.ItemRepository
+import com.jeanmeza.dispensapp.network.BarcodeRepository
 import com.jeanmeza.dispensapp.ui.item.navigation.ItemRoute
 import com.jeanmeza.dispensapp.util.BarcodeScanner
 import dagger.assisted.Assisted
@@ -30,6 +31,7 @@ const val TAG = "ItemScreenViewModel"
 class ItemScreenViewModel @AssistedInject constructor(
     private val itemRepository: ItemRepository,
     private val barcodeScanner: BarcodeScanner,
+    private val barcodeRepository: BarcodeRepository,
     savedStateHandle: SavedStateHandle,
     @Assisted assistedItemId: Int?,
     @Assisted private val assistedScanItem: Boolean,

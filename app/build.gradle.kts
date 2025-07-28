@@ -86,6 +86,10 @@ dependencies {
     // Scanning
     implementation(libs.google.android.gms.play.services.code.scanner)
     implementation(libs.kotlinx.coroutines.play.services)
+    // Retrofit
+    implementation(libs.jakewharton.retrofit.kotlinx.serialization.converter)
+    implementation(libs.squareup.retrofit)
+    implementation(libs.jetbrains.kotlinx.serialization.json)
 
     testImplementation(libs.junit)
     testImplementation(libs.jetbrains.kotlinx.coroutines.test)
