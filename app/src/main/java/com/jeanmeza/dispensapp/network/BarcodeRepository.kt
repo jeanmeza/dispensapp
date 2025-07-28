@@ -7,13 +7,13 @@ interface BarcodeRepository {
     /**
      * Fetches the item from the barcode API
      */
-    suspend fun getItem(barcode: String): List<NetworkItem>
+    suspend fun getItem(barcode: String): NetworkItem?
 }
 
 class NetworkBarcodeRepository @Inject constructor(
     private val barcodeApiService: BarcodeApiService
 ) : BarcodeRepository {
-    override suspend fun getItem(barcode: String): List<NetworkItem> =
+    override suspend fun getItem(barcode: String): NetworkItem? =
         barcodeApiService.getItem(barcode)
 
 }

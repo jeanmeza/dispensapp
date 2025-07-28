@@ -27,7 +27,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DispensAppModule {
-    private val baseUrl = "http://localhost:1880"
+    private const val baseUrl = "http://192.168.1.50:1880"
 
     @Provides
     @Singleton

@@ -64,12 +64,24 @@ class ItemScreenViewModel @AssistedInject constructor(
         // Collect the scan results
         viewModelScope.launch {
             barcodeScanner.barCodeResults.collect { scannedValue ->
-                scannedValue?.let { value ->
-                    // Use the scanned value to update the item name
-                    _itemUiState.update { currentState ->
-                        currentState.copy(
-                            item = currentState.item.copy(name = value)
-                        )
+                scannedValue?.let { barcode ->
+                    // Try to fetch item information from the barcode API
+                    try {
+                        val networkItem = barcodeRepository.getItem(barcode)
+                        if (networkItem != null) {
+                            // Update the UI state with the API data
+                            _itemUiState.update { currentState ->
+                                currentState.copy(
+                                    item = currentState.item.copy(
+                                        name = networkItem.name,
+                                        measureUnit = networkItem.measureUnit
+                                    )
+                                )
+                            }
+                        }
+                    } catch (e: Exception) {
+                        // If the API call fails, just log the error and don't update anything
+                        Log.e(TAG, "Failed to fetch item from barcode API: $barcode", e)
                     }
 
                     // Clear the barcode result after using it

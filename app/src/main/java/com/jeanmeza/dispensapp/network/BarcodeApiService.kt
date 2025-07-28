@@ -10,6 +10,6 @@ interface BarcodeApiService {
      * Returns the information about the item by its barcode
      */
     @GET("/api/v1/item")
-    suspend fun getItem(@Query("barcode") barcode: String): List<NetworkItem>
+    suspend fun getItem(@Query("barcode") barcode: String): NetworkItem?
 
 }
