@@ -5,6 +5,7 @@ import com.jeanmeza.dispensapp.data.local.entities.CategoryEntity
 data class Category(
     val id: Int = 0,
     val name: String,
+    val items: List<Item> = emptyList(),
 )
 
 fun Category.asEntity(): CategoryEntity {

@@ -6,12 +6,16 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.jeanmeza.dispensapp.data.local.entities.CategoryEntity
+import com.jeanmeza.dispensapp.data.local.entities.CategoryWithItems
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CategoryDao {
     @Query("SELECT * FROM categories ORDER BY name ASC")
     fun getCategoriesStream(): Flow<List<CategoryEntity>>
+
+    @Query("SELECT * FROM categories WHERE id = :id ORDER BY name ASC")
+    fun getCategoryWithItemsStream(id: Int): Flow<CategoryWithItems>
 
     @Query("SELECT * FROM categories WHERE id = :id")
     suspend fun getCategory(id: Int): CategoryEntity

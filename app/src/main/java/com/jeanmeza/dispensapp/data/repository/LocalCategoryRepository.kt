@@ -2,6 +2,7 @@ package com.jeanmeza.dispensapp.data.repository
 
 import com.jeanmeza.dispensapp.data.local.dao.CategoryDao
 import com.jeanmeza.dispensapp.data.local.entities.CategoryEntity
+import com.jeanmeza.dispensapp.data.local.entities.CategoryWithItems
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -10,6 +11,9 @@ class LocalCategoryRepository @Inject constructor(
 ) : CategoryRepository {
     override fun getCategoriesStream(): Flow<List<CategoryEntity>> =
         categoryDao.getCategoriesStream()
+
+    override fun getCategoriesWithItemsStream(categoryId: Int): Flow<CategoryWithItems> =
+        categoryDao.getCategoryWithItemsStream(categoryId)
 
     override suspend fun getCategory(id: Int): CategoryEntity = categoryDao.getCategory(id)
 

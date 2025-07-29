@@ -1,6 +1,7 @@
 package com.jeanmeza.dispensapp.data.repository
 
 import com.jeanmeza.dispensapp.data.local.entities.CategoryEntity
+import com.jeanmeza.dispensapp.data.local.entities.CategoryWithItems
 import kotlinx.coroutines.flow.Flow
 
 interface CategoryRepository {
@@ -8,6 +9,8 @@ interface CategoryRepository {
      * Retrieve all the categories from the the given data source.
      */
     fun getCategoriesStream(): Flow<List<CategoryEntity>>
+
+    fun getCategoriesWithItemsStream(categoryId: Int): Flow<CategoryWithItems>
 
     /**
      * Retrieve an category from the given data source that matches with the [id].
