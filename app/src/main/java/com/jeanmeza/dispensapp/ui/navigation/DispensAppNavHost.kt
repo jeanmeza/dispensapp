@@ -25,7 +25,7 @@ fun DispensAppNavHost(
     NavHost(
         navController = navController,
         startDestination = HomeRoute,
-        modifier = modifier
+        modifier = modifier,
     ) {
         /* region Top level destinations */
         homeScreen(

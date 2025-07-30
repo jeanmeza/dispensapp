@@ -1,17 +1,18 @@
 package com.jeanmeza.dispensapp.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -124,7 +125,23 @@ fun DispensApp(
         else NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
     ) {
         Scaffold(
-            modifier = modifier.fillMaxSize(),
+            modifier = modifier
+                .fillMaxSize()
+                .statusBarsPadding(),
+            topBar = {
+                AnimatedVisibility(
+                    visible = destination != null && shouldShowTopAppBar,
+                    enter = slideInVertically(),
+                    exit = fadeOut(),
+                ) {
+                    var searchQuery by rememberSaveable { mutableStateOf("") }
+                    DispensAppSearchBar(
+                        query = searchQuery,
+                        onQueryChange = { searchQuery = it },
+                        onSearch = {},
+                    )
+                }
+            },
             snackbarHost = {
                 SnackbarHost(
                     hostState = appState.snackBarHostState,
@@ -174,43 +191,19 @@ fun DispensApp(
                     .fillMaxSize()
                     .padding(innerPadding)
                     .consumeWindowInsets(innerPadding)
-                    .windowInsetsPadding(
-                        WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)
-                    ),
             ) {
-                if (destination != null && shouldShowTopAppBar) {
-                    var searchQuery by rememberSaveable { mutableStateOf("") }
-                    DispensAppSearchBar(
-                        query = searchQuery,
-                        onQueryChange = { searchQuery = it },
-                        onSearch = {},
-                    )
-                }
-
-                Box(
-                    // Workaround for https://issuetracker.google.com/338478720
-                    modifier = Modifier
-                        .consumeWindowInsets(
-                            if (destination != null && shouldShowTopAppBar) {
-                                WindowInsets.safeDrawing.only(WindowInsetsSides.Top)
-                            } else {
-                                WindowInsets(0, 0, 0, 0)
-                            }
-                        )
-                ) {
-                    DispensAppNavHost(
-                        appState = appState,
-                        onItemClicked = {
-                            itemIdToEdit = it
-                            showItemDialog = true
-                        },
-                        onCategoryClicked = {
-                            appState.navController.navigateToCategoryItems(it)
-                        },
-                        onCategorySelectionStart = { shouldShowTopAppBar = false },
-                        onCategorySelectionEnd = { shouldShowTopAppBar = true },
-                    )
-                }
+                DispensAppNavHost(
+                    appState = appState,
+                    onItemClicked = {
+                        itemIdToEdit = it
+                        showItemDialog = true
+                    },
+                    onCategoryClicked = {
+                        appState.navController.navigateToCategoryItems(it)
+                    },
+                    onCategorySelectionStart = { shouldShowTopAppBar = false },
+                    onCategorySelectionEnd = { shouldShowTopAppBar = true },
+                )
             }
         }
     }
