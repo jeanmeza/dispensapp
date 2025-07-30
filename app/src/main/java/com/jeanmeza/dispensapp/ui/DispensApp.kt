@@ -19,7 +19,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.WindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,6 +40,7 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import com.jeanmeza.dispensapp.R
 import com.jeanmeza.dispensapp.ui.categories.CategoryDialog
+import com.jeanmeza.dispensapp.ui.categoryitems.navigation.navigateToCategoryItems
 import com.jeanmeza.dispensapp.ui.component.DispensAppSearchBar
 import com.jeanmeza.dispensapp.ui.component.FabOptionsBottomSheet
 import com.jeanmeza.dispensapp.ui.item.ItemDialog
@@ -49,6 +54,7 @@ import kotlin.reflect.KClass
 fun DispensApp(
     appState: DispensAppState,
     modifier: Modifier = Modifier,
+    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
 ) {
     val currentDestination = appState.currentDestination
     var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
@@ -92,6 +98,7 @@ fun DispensApp(
         )
     }
 
+    val destination = appState.currentTopLevelDestination
     NavigationSuiteScaffold(
         navigationSuiteItems = {
             appState.topLevelDestinations.forEachIndexed { idx, destination ->
@@ -113,8 +120,9 @@ fun DispensApp(
                 )
             }
         },
+        layoutType = if (destination == null) NavigationSuiteType.None
+        else NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
     ) {
-        val destination = appState.currentTopLevelDestination
         Scaffold(
             modifier = modifier.fillMaxSize(),
             snackbarHost = {
@@ -195,6 +203,9 @@ fun DispensApp(
                         onItemClicked = {
                             itemIdToEdit = it
                             showItemDialog = true
+                        },
+                        onCategoryClicked = {
+                            appState.navController.navigateToCategoryItems(it)
                         },
                         onCategorySelectionStart = { shouldShowTopAppBar = false },
                         onCategorySelectionEnd = { shouldShowTopAppBar = true },

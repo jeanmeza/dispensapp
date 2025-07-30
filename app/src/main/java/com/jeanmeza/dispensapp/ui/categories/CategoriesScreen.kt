@@ -34,15 +34,17 @@ import com.jeanmeza.dispensapp.ui.theme.DispensAppTheme
 
 @Composable
 fun CategoriesRoute(
-    modifier: Modifier = Modifier,
+    onCategoryClicked: (Int) -> Unit,
     onSelectionStart: () -> Unit,
     onSelectionEnd: () -> Unit,
-    viewModel: CategoriesViewModel = hiltViewModel()
+    modifier: Modifier = Modifier,
+    viewModel: CategoriesViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     CategoriesScreen(
         modifier = modifier,
         categories = uiState.categories,
+        onCategoryClicked = onCategoryClicked,
         isSelectingCategories = uiState.isSelectingCategories,
         toggleCategorySelection = {
             viewModel.toggleCategorySelection(it, onSelectionEnd)
@@ -69,6 +71,7 @@ fun CategoriesRoute(
 private fun CategoriesScreen(
     categories: List<Category>,
     isSelectingCategories: Boolean,
+    onCategoryClicked: (Int) -> Unit,
     toggleCategorySelection: (Category) -> Unit,
     activateSelection: (Category) -> Unit,
     cancelSelection: () -> Unit,
@@ -107,7 +110,7 @@ private fun CategoriesScreen(
                                 if (isSelectingCategories) {
                                     toggleCategorySelection(category)
                                 } else {
-                                    // TODO: Navigate to items screen filtering by category
+                                    onCategoryClicked(category.id)
                                 }
                             },
                             onLongClick = {
@@ -177,13 +180,14 @@ fun CategoriesScreenPreview(
         CategoriesScreen(
             categories = categories,
             isSelectingCategories = false,
+            onCategoryClicked = {},
             toggleCategorySelection = {},
             activateSelection = {},
             cancelSelection = {},
             selectAll = {},
             deleteSelected = {},
             isSelected = { false },
-            amountSelected = 0
+            amountSelected = 0,
         )
     }
 }

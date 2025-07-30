@@ -1,6 +1,7 @@
 package com.jeanmeza.dispensapp
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Room
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.jeanmeza.dispensapp.data.local.DispensAppDatabase
@@ -22,18 +23,25 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
+import java.util.concurrent.Executors
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object DispensAppModule {
-    private const val baseUrl = "http://192.168.1.50:1880"
+    private const val BASE_URL = "http://192.168.1.50:1880"
 
     @Provides
     @Singleton
     fun provideDipensAppDatabase(@ApplicationContext context: Context): DispensAppDatabase {
         return Room.databaseBuilder(context, DispensAppDatabase::class.java, "dispensapp_database")
             .fallbackToDestructiveMigration(true)
+            .setQueryCallback(
+                { sqlQuery, bindArgs ->
+                    Log.d("RoomQuery", "SQL Query: $sqlQuery SQL Args: $bindArgs")
+                },
+                Executors.newSingleThreadExecutor()
+            )
             .build()
     }
 
@@ -68,7 +76,7 @@ object DispensAppModule {
         val json = Json { ignoreUnknownKeys = true }
 
         return Retrofit.Builder()
-            .baseUrl(baseUrl)
+            .baseUrl(BASE_URL)
             .addConverterFactory(json.asConverterFactory(contentType))
             .build()
             .create(BarcodeApiService::class.java)

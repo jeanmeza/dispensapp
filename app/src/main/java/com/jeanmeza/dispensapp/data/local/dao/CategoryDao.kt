@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.jeanmeza.dispensapp.data.local.entities.CategoryEntity
 import com.jeanmeza.dispensapp.data.local.entities.CategoryWithItems
@@ -14,6 +15,7 @@ interface CategoryDao {
     @Query("SELECT * FROM categories ORDER BY name ASC")
     fun getCategoriesStream(): Flow<List<CategoryEntity>>
 
+    @Transaction
     @Query("SELECT * FROM categories WHERE id = :id ORDER BY name ASC")
     fun getCategoryWithItemsStream(id: Int): Flow<CategoryWithItems>
 
