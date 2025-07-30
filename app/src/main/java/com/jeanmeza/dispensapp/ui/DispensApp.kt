@@ -100,6 +100,10 @@ fun DispensApp(
     }
 
     val destination = appState.currentTopLevelDestination
+    // Modify the shouldShowTopAppBar logic to hide it for non-top-level destinations
+    val isTopLevelDestination = appState.currentTopLevelDestination != null
+    shouldShowTopAppBar = isTopLevelDestination
+
     NavigationSuiteScaffold(
         navigationSuiteItems = {
             appState.topLevelDestinations.forEachIndexed { idx, destination ->
@@ -134,12 +138,15 @@ fun DispensApp(
                     enter = slideInVertically(),
                     exit = fadeOut(),
                 ) {
-                    var searchQuery by rememberSaveable { mutableStateOf("") }
-                    DispensAppSearchBar(
-                        query = searchQuery,
-                        onQueryChange = { searchQuery = it },
-                        onSearch = {},
-                    )
+                    // Update the top bar section to only show for top-level destinations
+                    if (isTopLevelDestination && shouldShowTopAppBar) {
+                        var searchQuery by rememberSaveable { mutableStateOf("") }
+                        DispensAppSearchBar(
+                            query = searchQuery,
+                            onQueryChange = { searchQuery = it },
+                            onSearch = {},
+                        )
+                    }
                 }
             },
             snackbarHost = {
@@ -213,4 +220,3 @@ private fun NavDestination?.isRouteInHierarchy(route: KClass<*>) =
     this?.hierarchy?.any {
         it.hasRoute(route)
     } ?: false
-

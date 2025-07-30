@@ -1,6 +1,7 @@
 package com.jeanmeza.dispensapp.ui.categoryitems.navigation
 
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.navigation.NavController
@@ -29,12 +30,16 @@ fun NavGraphBuilder.categoryItemsScreen(
             slideInHorizontally(
                 initialOffsetX = { it },
                 animationSpec = tween(300)
-            )
+            ) + fadeIn(animationSpec = tween(300))
         },
         exitTransition = {
-            fadeOut(
-                animationSpec = tween(300)
-            )
+            fadeOut(animationSpec = tween(300))
+        },
+        popEnterTransition = {
+            fadeIn(animationSpec = tween(300))
+        },
+        popExitTransition = {
+            fadeOut(animationSpec = tween(300))
         }
     ) {
         CategoryItemsRoute(

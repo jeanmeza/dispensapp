@@ -1,5 +1,9 @@
 package com.jeanmeza.dispensapp.ui.item.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -21,7 +25,23 @@ fun NavGraphBuilder.itemScreen(
     onBackClicked: () -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
 ) {
-    composable<ItemRoute> {
+    composable<ItemRoute>(
+        enterTransition = {
+            slideInHorizontally(
+                initialOffsetX = { it },
+                animationSpec = tween(300)
+            ) + fadeIn(animationSpec = tween(300))
+        },
+        exitTransition = {
+            fadeOut(animationSpec = tween(300))
+        },
+        popEnterTransition = {
+            fadeIn(animationSpec = tween(300))
+        },
+        popExitTransition = {
+            fadeOut(animationSpec = tween(300))
+        }
+    ) {
         ItemRoute(
             onBackClicked = onBackClicked,
             onShowSnackbar = onShowSnackbar,
