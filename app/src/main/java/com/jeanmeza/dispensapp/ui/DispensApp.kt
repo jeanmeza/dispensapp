@@ -35,7 +35,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -44,8 +43,7 @@ import com.jeanmeza.dispensapp.ui.categories.CategoryDialog
 import com.jeanmeza.dispensapp.ui.categoryitems.navigation.navigateToCategoryItems
 import com.jeanmeza.dispensapp.ui.component.DispensAppSearchBar
 import com.jeanmeza.dispensapp.ui.component.FabOptionsBottomSheet
-import com.jeanmeza.dispensapp.ui.item.ItemDialog
-import com.jeanmeza.dispensapp.ui.item.ItemScreenViewModel
+import com.jeanmeza.dispensapp.ui.item.navigation.navigateToItem
 import com.jeanmeza.dispensapp.ui.navigation.DispensAppNavHost
 import com.jeanmeza.dispensapp.ui.theme.DispensAppIcons
 import kotlin.reflect.KClass
@@ -61,32 +59,12 @@ fun DispensApp(
     var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
     var showModalBottomSheet by rememberSaveable { mutableStateOf(false) }
     var shouldShowTopAppBar by rememberSaveable { mutableStateOf(true) }
-    var showItemDialog by rememberSaveable { mutableStateOf(false) }
-    var itemIdToEdit by rememberSaveable { mutableStateOf<Int?>(null) }
-    var scanItem by rememberSaveable { mutableStateOf(false) }
-
-    if (showItemDialog) {
-        ItemDialog(
-            onDismiss = {
-                itemIdToEdit = null
-                showItemDialog = false
-                scanItem = false
-            },
-            onShowSnackbar = appState::onShowSnackbar,
-            viewModel = hiltViewModel<ItemScreenViewModel, ItemScreenViewModel.Factory>(
-                key = "${itemIdToEdit}_${scanItem}_${System.currentTimeMillis()}"
-            ) {
-                it.create(itemIdToEdit, scanItem)
-            }
-        )
-    }
 
     if (showModalBottomSheet) {
         FabOptionsBottomSheet(
             onDismiss = { showModalBottomSheet = false },
             onItemOptionSelected = {
-                itemIdToEdit = null
-                showItemDialog = true
+                appState.navController.navigateToItem()
             },
             onCategoryOptionSelected = { showCategoryDialog = true },
             onShoppingListOptionSelected = {},
@@ -163,8 +141,7 @@ fun DispensApp(
                     ) {
                         FloatingActionButton(
                             onClick = {
-                                showItemDialog = true
-                                scanItem = true
+                                appState.navController.navigateToItem(startScan = true)
                             },
                             containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                             contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
@@ -201,9 +178,8 @@ fun DispensApp(
             ) {
                 DispensAppNavHost(
                     appState = appState,
-                    onItemClicked = {
-                        itemIdToEdit = it
-                        showItemDialog = true
+                    onItemClicked = { itemId ->
+                        appState.navController.navigateToItem(itemId)
                     },
                     onCategoryClicked = {
                         appState.navController.navigateToCategoryItems(it)

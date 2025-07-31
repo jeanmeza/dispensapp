@@ -15,33 +15,27 @@ import com.jeanmeza.dispensapp.data.repository.ItemRepository
 import com.jeanmeza.dispensapp.network.BarcodeRepository
 import com.jeanmeza.dispensapp.ui.item.navigation.ItemRoute
 import com.jeanmeza.dispensapp.util.BarcodeScanner
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 import kotlin.time.Instant
 
 const val TAG = "ItemScreenViewModel"
 
-@HiltViewModel(assistedFactory = ItemScreenViewModel.Factory::class)
-class ItemScreenViewModel @AssistedInject constructor(
+@HiltViewModel()
+class ItemScreenViewModel @Inject constructor(
     private val itemRepository: ItemRepository,
     private val barcodeScanner: BarcodeScanner,
     private val barcodeRepository: BarcodeRepository,
     savedStateHandle: SavedStateHandle,
-    @Assisted assistedItemId: Int?,
-    @Assisted private val assistedScanItem: Boolean,
 ) : ViewModel() {
 
-    private val itemId: Int? = assistedItemId ?: try {
-        savedStateHandle.toRoute<ItemRoute>().itemId
-    } catch (_: Exception) {
-        null
-    }
+    private val itemRoute = savedStateHandle.toRoute<ItemRoute>()
+    private val itemId: Int? = itemRoute.itemId
+    private val startScan: Boolean = itemRoute.startScan
 
     val isEditing = itemId != null
 
@@ -49,7 +43,7 @@ class ItemScreenViewModel @AssistedInject constructor(
     val itemUiState = _itemUiState.asStateFlow()
 
     init {
-        if (assistedScanItem) {
+        if (startScan) {
             initiateScan()
         }
         resetToFreshState()
@@ -200,11 +194,6 @@ class ItemScreenViewModel @AssistedInject constructor(
         }
     }
 
-
-    @AssistedFactory
-    interface Factory {
-        fun create(itemId: Int?, scanItem: Boolean): ItemScreenViewModel
-    }
 }
 
 data class ItemScreenUiState(

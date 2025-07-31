@@ -14,12 +14,14 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ItemRoute(
     val itemId: Int? = null,
+    val startScan: Boolean = false,
 )
 
 fun NavController.navigateToItem(
     itemId: Int? = null,
+    startScan: Boolean = false,
     navOptions: NavOptions? = null,
-) = navigate(route = ItemRoute(itemId), navOptions)
+) = navigate(route = ItemRoute(itemId, startScan), navOptions)
 
 fun NavGraphBuilder.itemScreen(
     onBackClicked: () -> Unit,
