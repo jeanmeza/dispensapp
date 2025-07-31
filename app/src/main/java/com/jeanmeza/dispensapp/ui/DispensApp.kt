@@ -1,8 +1,6 @@
 package com.jeanmeza.dispensapp.ui
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -78,8 +76,7 @@ fun DispensApp(
     }
 
     val destination = appState.currentTopLevelDestination
-    // Modify the shouldShowTopAppBar logic to hide it for non-top-level destinations
-    val isTopLevelDestination = appState.currentTopLevelDestination != null
+    val isTopLevelDestination = destination != null
     shouldShowTopAppBar = isTopLevelDestination
 
     NavigationSuiteScaffold(
@@ -103,7 +100,7 @@ fun DispensApp(
                 )
             }
         },
-        layoutType = if (destination == null) NavigationSuiteType.None
+        layoutType = if (!isTopLevelDestination) NavigationSuiteType.None
         else NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
     ) {
         Scaffold(
@@ -112,19 +109,14 @@ fun DispensApp(
                 .statusBarsPadding(),
             topBar = {
                 AnimatedVisibility(
-                    visible = destination != null && shouldShowTopAppBar,
-                    enter = slideInVertically(),
-                    exit = fadeOut(),
+                    visible = isTopLevelDestination && shouldShowTopAppBar,
                 ) {
-                    // Update the top bar section to only show for top-level destinations
-                    if (isTopLevelDestination && shouldShowTopAppBar) {
-                        var searchQuery by rememberSaveable { mutableStateOf("") }
-                        DispensAppSearchBar(
-                            query = searchQuery,
-                            onQueryChange = { searchQuery = it },
-                            onSearch = {},
-                        )
-                    }
+                    var searchQuery by rememberSaveable { mutableStateOf("") }
+                    DispensAppSearchBar(
+                        query = searchQuery,
+                        onQueryChange = { searchQuery = it },
+                        onSearch = {},
+                    )
                 }
             },
             snackbarHost = {
