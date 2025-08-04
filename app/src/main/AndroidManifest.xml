@@ -47,6 +47,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <receiver
+            android:name=".notifications.ExpiryNotificationReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
+        <service
+            android:name=".notifications.ExpiryNotificationService"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -24,6 +24,11 @@ interface ItemRepository {
     fun getItemStream(id: Int): Flow<PopulatedItem?>
 
     /**
+     * One-shot function to retrieve all the items from the the given data source.
+     */
+    suspend fun getAllItems(): List<ItemEntity>
+
+    /**
      * Retrieve an item from the given data source that matches with the [id].
      */
     suspend fun getItem(id: Int): PopulatedItem
