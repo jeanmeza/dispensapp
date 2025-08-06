@@ -48,15 +48,6 @@
             </intent-filter>
         </activity>
 
-        <receiver
-            android:name=".notifications.ExpiryNotificationReceiver"
-            android:enabled="true"
-            android:exported="false" />
-
-        <service
-            android:name=".notifications.ExpiryNotificationService"
-            android:enabled="true"
-            android:exported="false" />
     </application>
 
 </manifest>

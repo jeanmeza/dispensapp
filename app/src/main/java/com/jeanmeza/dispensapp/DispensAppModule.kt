@@ -34,15 +34,18 @@ object DispensAppModule {
     @Provides
     @Singleton
     fun provideDipensAppDatabase(@ApplicationContext context: Context): DispensAppDatabase {
-        return Room.databaseBuilder(context, DispensAppDatabase::class.java, "dispensapp_database")
-            .fallbackToDestructiveMigration(true)
-            .setQueryCallback(
+        val builder =
+            Room.databaseBuilder(context, DispensAppDatabase::class.java, "dispensapp_database")
+                .fallbackToDestructiveMigration(true)
+        if (BuildConfig.DEBUG) {
+            builder.setQueryCallback(
                 { sqlQuery, bindArgs ->
                     Log.d("RoomQuery", "SQL Query: $sqlQuery SQL Args: $bindArgs")
                 },
                 Executors.newSingleThreadExecutor()
             )
-            .build()
+        }
+        return builder.build()
     }
 
     @Provides

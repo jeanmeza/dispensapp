@@ -1,48 +1,39 @@
 package com.jeanmeza.dispensapp
 
 import android.app.Application
-import androidx.hilt.work.HiltWorkerFactory
-import androidx.work.Configuration
-import androidx.work.Constraints
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
-import com.jeanmeza.dispensapp.worker.ExpiryCheckWorker
+import android.content.pm.ApplicationInfo
+import android.os.StrictMode
+import android.os.StrictMode.ThreadPolicy.Builder
+import com.jeanmeza.dispensapp.initialiser.ExpiryCheck
 import dagger.hilt.android.HiltAndroidApp
-import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
 @HiltAndroidApp
-class DispensAppApplication : Application(), Configuration.Provider {
-
-    @Inject
-    lateinit var hiltWorkerFactory: HiltWorkerFactory
-
-    override val workManagerConfiguration: Configuration
-        get() = Configuration.Builder()
-            .setWorkerFactory(hiltWorkerFactory)
-            .build()
+class DispensAppApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        initialiseExpiryWorker()
+        setStrictModePolicy()
+        ExpiryCheck.initialise(context = this)
     }
 
-    private fun initialiseExpiryWorker() {
-        val workRequest = PeriodicWorkRequestBuilder<ExpiryCheckWorker>(1L, TimeUnit.DAYS)
-            .setConstraints(
-                Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
-                    .build()
+    /**
+     * Return true if the application is debuggable.
+     */
+    private fun isDebuggable(): Boolean {
+        return 0 != applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE
+    }
+
+    /**
+     * Set a thread policy that detects all potential problems on the main thread, such as network
+     * and disk access.
+     *
+     * If a problem is found, the offending call will be logged and the application will be killed.
+     */
+    private fun setStrictModePolicy() {
+        if (isDebuggable()) {
+            StrictMode.setThreadPolicy(
+                Builder().detectAll().penaltyLog().build(),
             )
-            .build()
-
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            "ExpiryCheckWorkName",
-            ExistingPeriodicWorkPolicy.KEEP,
-            workRequest
-        )
+        }
     }
-
 }
