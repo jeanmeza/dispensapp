@@ -12,22 +12,17 @@ import androidx.core.content.ContextCompat
 import com.jeanmeza.dispensapp.ui.DispensApp
 import com.jeanmeza.dispensapp.ui.rememberDispensAppState
 import com.jeanmeza.dispensapp.ui.theme.DispensAppTheme
-import com.jeanmeza.dispensapp.util.BarcodeScanner
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    @Inject
-    lateinit var barcodeScanner: BarcodeScanner
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestNotificationPermission()
         enableEdgeToEdge()
         setContent {
-            val appState = rememberDispensAppState(barcodeScanner = barcodeScanner)
+            val appState = rememberDispensAppState()
             DispensAppTheme {
                 DispensApp(appState)
             }

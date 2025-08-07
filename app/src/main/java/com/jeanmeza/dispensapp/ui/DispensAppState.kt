@@ -23,22 +23,19 @@ import com.jeanmeza.dispensapp.ui.navigation.TopLevelDestination
 import com.jeanmeza.dispensapp.ui.navigation.TopLevelDestination.CATEGORIES
 import com.jeanmeza.dispensapp.ui.navigation.TopLevelDestination.EXPIRING
 import com.jeanmeza.dispensapp.ui.navigation.TopLevelDestination.HOME
-import com.jeanmeza.dispensapp.util.BarcodeScanner
 
 @Composable
 fun rememberDispensAppState(
-    barcodeScanner: BarcodeScanner,
     navController: NavHostController = rememberNavController(),
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ): DispensAppState {
     return remember(navController) {
-        DispensAppState(barcodeScanner, navController, snackBarHostState)
+        DispensAppState(navController, snackBarHostState)
     }
 }
 
 @Stable
 class DispensAppState(
-    val barcodeScanner: BarcodeScanner,
     val navController: NavHostController,
     val snackBarHostState: SnackbarHostState
 ) {
