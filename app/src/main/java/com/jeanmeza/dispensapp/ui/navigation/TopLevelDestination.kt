@@ -6,7 +6,6 @@ import com.jeanmeza.dispensapp.R
 import com.jeanmeza.dispensapp.ui.categories.navigation.CategoriesRoute
 import com.jeanmeza.dispensapp.ui.expiring.navigation.ExpiringRoute
 import com.jeanmeza.dispensapp.ui.home.navigation.HomeRoute
-import com.jeanmeza.dispensapp.ui.shoppinglist.navigation.ShoppingListRoute
 import com.jeanmeza.dispensapp.ui.theme.DispensAppIcons
 import kotlin.reflect.KClass
 
@@ -39,11 +38,11 @@ enum class TopLevelDestination(
         titleTextId = R.string.expiring,
         route = ExpiringRoute::class,
     ),
-    SHOPPING_LIST(
-        selectedIcon = DispensAppIcons.ShoppingList,
-        unselectedIcon = DispensAppIcons.ShoppingListOutlined,
-        iconTextId = R.string.shopping_list,
-        titleTextId = R.string.shopping_list,
-        route = ShoppingListRoute::class,
-    )
+//    SHOPPING_LIST(
+//        selectedIcon = DispensAppIcons.ShoppingList,
+//        unselectedIcon = DispensAppIcons.ShoppingListOutlined,
+//        iconTextId = R.string.shopping_list,
+//        titleTextId = R.string.shopping_list,
+//        route = ShoppingListRoute::class,
+//    )
 }

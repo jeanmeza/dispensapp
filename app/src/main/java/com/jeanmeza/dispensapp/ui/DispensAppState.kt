@@ -1,5 +1,6 @@
 package com.jeanmeza.dispensapp.ui
 
+//import com.jeanmeza.dispensapp.ui.navigation.TopLevelDestination.SHOPPING_LIST
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -22,8 +23,6 @@ import com.jeanmeza.dispensapp.ui.navigation.TopLevelDestination
 import com.jeanmeza.dispensapp.ui.navigation.TopLevelDestination.CATEGORIES
 import com.jeanmeza.dispensapp.ui.navigation.TopLevelDestination.EXPIRING
 import com.jeanmeza.dispensapp.ui.navigation.TopLevelDestination.HOME
-import com.jeanmeza.dispensapp.ui.navigation.TopLevelDestination.SHOPPING_LIST
-import com.jeanmeza.dispensapp.ui.shoppinglist.navigation.navigateToShoppingList
 import com.jeanmeza.dispensapp.util.BarcodeScanner
 
 @Composable
@@ -79,7 +78,7 @@ class DispensAppState(
                 HOME -> navController.navigateToHome(topLevelNavOptions)
                 CATEGORIES -> navController.navigateToCategories(topLevelNavOptions)
                 EXPIRING -> navController.navigateToExpiring(topLevelNavOptions)
-                SHOPPING_LIST -> navController.navigateToShoppingList(topLevelNavOptions)
+//                SHOPPING_LIST -> navController.navigateToShoppingList(topLevelNavOptions)
             }
         }
     }
