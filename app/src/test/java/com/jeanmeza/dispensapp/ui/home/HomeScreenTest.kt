@@ -7,6 +7,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.jeanmeza.dispensapp.data.model.Item
+import com.jeanmeza.dispensapp.ui.component.ItemCardList
 import com.jeanmeza.dispensapp.ui.theme.DispensAppTheme
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -44,7 +45,7 @@ class HomeScreenTest {
     fun homeScreen_displays_empty_state_when_no_items() {
         composeTestRule.setContent {
             DispensAppTheme {
-                HomeScreen(
+                ItemCardList(
                     items = emptyList(),
                     onItemClick = {}
                 )
@@ -62,7 +63,7 @@ class HomeScreenTest {
         // Act
         composeTestRule.setContent {
             DispensAppTheme {
-                HomeScreen(
+                ItemCardList(
                     items = items,
                     onItemClick = {},
                 )
@@ -86,7 +87,7 @@ class HomeScreenTest {
         // Act
         composeTestRule.setContent {
             DispensAppTheme {
-                HomeScreen(
+                ItemCardList(
                     items = items,
                     onItemClick = mockOnItemClick,
                 )

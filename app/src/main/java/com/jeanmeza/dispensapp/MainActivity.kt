@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val appState = rememberDispensAppState()
-            DispensAppTheme {
+            DispensAppTheme() {
                 DispensApp(appState)
             }
         }

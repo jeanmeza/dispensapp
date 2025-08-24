@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.outlined.Category
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Dangerous
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Home
@@ -25,6 +26,7 @@ import androidx.compose.material.icons.rounded.PhotoCamera
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.SelectAll
 import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.WarningAmber
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
@@ -41,6 +43,7 @@ object DispensAppIcons {
     val CategoriesOutlined = Icons.Outlined.Category
     val Checkbox = Icons.Rounded.CheckBox
     val CloseOutlined = Icons.Outlined.Close
+    val DangerousOutlined = Icons.Outlined.Dangerous
     val DateRange = Icons.Rounded.DateRange
     val DeleteOutlined = Icons.Outlined.Delete
     val EditOutlined = Icons.Outlined.Edit
@@ -55,6 +58,7 @@ object DispensAppIcons {
     val StorefrontOutlined = Icons.Outlined.Storefront
     val ShoppingList = Icons.Filled.ShoppingCart
     val ShoppingListOutlined = Icons.Outlined.ShoppingCart
+    val WarningAmber = Icons.Rounded.WarningAmber
 
     @Composable
     fun Grocery() {

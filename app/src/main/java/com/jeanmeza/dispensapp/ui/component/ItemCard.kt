@@ -12,13 +12,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
@@ -30,6 +33,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.jeanmeza.dispensapp.R
 import com.jeanmeza.dispensapp.data.model.Item
 import com.jeanmeza.dispensapp.ui.formattedDate
+import com.jeanmeza.dispensapp.ui.theme.DispensAppIcons
 import com.jeanmeza.dispensapp.ui.theme.DispensAppTheme
 import com.jeanmeza.dispensapp.ui.theme.Shapes
 import kotlin.time.Clock
@@ -38,15 +42,13 @@ import kotlin.time.Instant
 
 @Composable
 fun ItemCard(item: Item, modifier: Modifier = Modifier) {
-    ElevatedCard(
+    Card(
         modifier = modifier,
         shape = Shapes.small,
         colors = CardDefaults.cardColors()
-            .copy(
-                containerColor = itemCardContainerColor(item.expiryDate),
-                contentColor = Color(0xFF1B1C19)  // It's the same as onSurfaceLight
-            ),
-    ) {
+            .copy(containerColor = Color.Transparent),
+
+        ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.p_sm)),
             modifier = Modifier
@@ -54,9 +56,10 @@ fun ItemCard(item: Item, modifier: Modifier = Modifier) {
         ) {
             Box(
                 modifier = Modifier
+                    .clip(CircleShape)
+                    .width(80.dp)
                     .fillMaxHeight()
                     .background(color = MaterialTheme.colorScheme.surfaceContainerHighest)
-                    .width(80.dp)
             ) {
                 if (item.imageUri != null) {
                     Image(
@@ -76,31 +79,33 @@ fun ItemCard(item: Item, modifier: Modifier = Modifier) {
                         horizontal = dimensionResource(R.dimen.p_md),
                     )
             ) {
-                Text(
-                    text = item.name,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
-                )
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Bottom,
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Box {
+                    Text(
+                        text = item.name,
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        text = "${item.quantity} ${item.measureUnit}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                if (item.expiryDate != null) {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.Bottom,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
                         Text(
-                            text = "${item.quantity} ${item.measureUnit}",
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.Bold
+                            text = "Expires ${formattedDate(item.expiryDate)}",
+                            style = MaterialTheme.typography.titleMedium,
                         )
-                    }
-                    if (item.expiryDate != null) {
-                        val formattedDate = formattedDate(item.expiryDate)
-                        Box {
-                            Text(
-                                text = "Expires $formattedDate",
-                                style = MaterialTheme.typography.titleMedium,
-                            )
-                        }
+                        ExpiryIcon(item.expiryDate)
                     }
                 }
             }
@@ -109,19 +114,23 @@ fun ItemCard(item: Item, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun itemCardContainerColor(expiryDate: Instant?): Color {
-    if (expiryDate == null) {
-        return Color(0xFFE4FFE0)
-    }
+private fun ExpiryIcon(expiryDate: Instant) {
     val today = Clock.System.now()
     val sevenDaysFromNow = today.plus(7.days)
     if (expiryDate < today) {
-        return Color(0xFFFDE9EB)
+        return Icon(
+            imageVector = DispensAppIcons.DangerousOutlined,
+            contentDescription = null,
+            tint = Color(0xFFDC3545)  // Crimson
+        )
     }
     if (expiryDate < sevenDaysFromNow) {
-        return Color(0xFFFFF2E5)
+        return Icon(
+            imageVector = DispensAppIcons.WarningAmber,
+            contentDescription = null,
+            tint = Color(0xFFFFBF00)  // Amber
+        )
     }
-    return Color(0xFFE4FFE0)
 }
 
 @Preview
@@ -173,6 +182,25 @@ fun ItemCardPreview() {
                 quantity = 12,
                 measureUnit = "Kg",
                 expiryDate = Clock.System.now().plus(7.days),
+                categories = emptyList(),
+                imageUri = null,
+            ),
+            modifier = Modifier.height(80.dp)
+        )
+    }
+}
+
+@Preview
+@Composable
+fun ItemCardPreviewNoExpiry() {
+    DispensAppTheme(dynamicColor = false) {
+        ItemCard(
+            item = Item(
+                id = 1,
+                name = "Pasta",
+                quantity = 12,
+                measureUnit = "Kg",
+                expiryDate = null,
                 categories = emptyList(),
                 imageUri = null,
             ),
