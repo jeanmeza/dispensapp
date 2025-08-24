@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
@@ -68,6 +69,8 @@ fun SmallItemCard(
             Text(
                 text = item.name,
                 style = MaterialTheme.typography.headlineSmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }
@@ -80,7 +83,7 @@ fun SmallItemCardPreview() {
         SmallItemCard(
             item = Item(
                 id = 1,
-                name = "Pasta",
+                name = "Pasta and so on and so forth yadayada",
                 quantity = 12,
                 measureUnit = "pacchetti",
                 expiryDate = Clock.System.now().plus(7.days),
