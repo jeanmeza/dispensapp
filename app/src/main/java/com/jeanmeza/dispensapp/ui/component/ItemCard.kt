@@ -27,6 +27,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
@@ -88,11 +89,19 @@ fun ItemCard(item: Item, modifier: Modifier = Modifier) {
                         text = item.name,
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(4f)
                     )
                     Text(
                         text = "${item.quantity} ${item.measureUnit}",
                         style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(start = dimensionResource(id = R.dimen.p_xs))
                     )
                 }
                 if (item.expiryDate != null) {
@@ -159,9 +168,9 @@ fun ItemCardPreviewAboutToExpire() {
         ItemCard(
             item = Item(
                 id = 1,
-                name = "Pasta",
-                quantity = 12,
-                measureUnit = "Kg",
+                name = "Pasta With A Very Long Name That Should Be Clipped",
+                quantity = 12345,
+                measureUnit = "UnitsOfSomethingVeryLong",
                 expiryDate = Clock.System.now().plus(1.days),
                 categories = emptyList(),
                 imageUri = null,
@@ -208,4 +217,3 @@ fun ItemCardPreviewNoExpiry() {
         )
     }
 }
-
